@@ -17,14 +17,14 @@
       "observation": "Key terms: LLM, RAG, Augmented Generation. Numeric values: 0.543, 0.427, 0.311, 0.248, 0.172."
     }
   ],
-  "final_answer": "[extractor] Key terms: LLM, RAG, Augmented Generation. Numeric values: 0.543, 0.427, 0.311, 0.248, 0.172.",
-  "total_latency_ms": 971.64,
+  "final_answer": "The types of hallucinations mentioned in the context are:\n\n1. Intrinsic hallucination: Refers to LLM outputs that contradict the source.\n2. Extrinsic hallucination: Refers to LLM outputs that introduce new information not supported by the input context.",
+  "total_latency_ms": 8630.39,
   "tool_calls": [
     {
       "tool": "retriever",
       "input": "Retrieve information about hallucination in LLMs and extract the types mentioned.",
       "output_snippet": "[doc_09 | score=0.543] Hallucination is more common in low-resource languages and long-form generation tasks.\n[doc_09 | score=0.427] Hallucination refers to LLM outputs that are factually incorrect or unsupported by the input context. Intrinsic hallucination contradicts the source, while extrinsic h",
-      "latency_ms": 971.09,
+      "latency_ms": 1142.47,
       "success": true
     },
     {

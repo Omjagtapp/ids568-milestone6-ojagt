@@ -14,24 +14,24 @@
       "thought": "I have context. Now I will summarize it into a concise answer.",
       "action": "summarizer",
       "action_input": "[retriever] [doc_15 | score=0.578] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight up",
-      "observation": "[retriever] [doc_15 | score=0.578] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight updates: W' = W + BA where B is in R^\n[doc_15 | score=0.532] QLoRA combines LoRA with 4-bit quantisation, enabling fine-tuning of 65B parameter models on a single 48GB GPU.  [Ollama unavailable \u2013 Failed"
+      "observation": "Here is a 3-sentence summary:\n\nPEFT methods, such as LoRA and QLoRA, fine-tune pre-trained models by modifying a small fraction of parameters without retraining the entire model. Instruction tuning involves fine-tuning large language models on (instruction, response) pairs to follow natural-language directions. Evaluation metrics for retrieval tasks include Precision@k, Recall@k, and Mean Reciproc"
     }
   ],
-  "final_answer": "[summarizer] [retriever] [doc_15 | score=0.578] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight updates: W' = W + BA where B is in R^\n[doc_15 | score=0.532] QLoRA combines LoRA with 4-bit quantisation, enabling fine-tuning of 65B parameter models on a single 48GB GPU.  [Ollama unavailable \u2013 Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. ",
-  "total_latency_ms": 931.03,
+  "final_answer": "LoRA works by adding trainable rank-r matrices to weight updates: W' = W + BA, where B is in R^(r*n), allowing for parameter-efficient fine-tuning of pre-trained models.",
+  "total_latency_ms": 14714.11,
   "tool_calls": [
     {
       "tool": "retriever",
       "input": "Retrieve and summarize how LoRA works for parameter-efficient fine-tuning.",
       "output_snippet": "[doc_15 | score=0.578] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight updates: W' = W + BA where B is in R^\n[doc_15 | score=0.532] QLoRA combines LoRA with 4-bit quantisation, enabling",
-      "latency_ms": 929.93,
+      "latency_ms": 1152.78,
       "success": true
     },
     {
       "tool": "summarizer",
       "input": "[retriever] [doc_15 | score=0.578] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight up",
-      "output_snippet": "[retriever] [doc_15 | score=0.578] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight updates: W' = W + BA where B is in R^\n[doc_15 | score=0.532] QLoRA combines LoRA with 4-bit quantisati",
-      "latency_ms": 0.66,
+      "output_snippet": "Here is a 3-sentence summary:\n\nPEFT methods, such as LoRA and QLoRA, fine-tune pre-trained models by modifying a small fraction of parameters without retraining the entire model. Instruction tuning involves fine-tuning large language models on (instruction, response) pairs to follow natural-language",
+      "latency_ms": 6137.22,
       "success": true
     }
   ],

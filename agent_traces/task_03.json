@@ -11,33 +11,27 @@
     },
     {
       "iteration": 2,
-      "thought": "I will call retriever to gather more information.",
-      "action": "retriever",
-      "action_input": "Explain what chunking strategies are used in RAG pipelines and why overlap matters.",
-      "observation": "[doc_07 | score=0.533] Chunk size (256 to 1024 tokens) and overlap (10 to 20 percent) are key hyperparameters that affect both retrieval precision and context coherence. Smaller chunks improve precision but may lose context\n[doc_07 | score=0.484] Document chunking splits long texts into smaller passages that fit within the context window of the retriever and generator. Fixed-size chunking splits b"
-    },
-    {
-      "iteration": 3,
-      "thought": "I have enough information to produce a final answer.",
-      "action": "FINISH",
-      "observation": "Task complete."
+      "thought": "I have context. Now I will summarize it into a concise answer.",
+      "action": "summarizer",
+      "action_input": "[retriever] [doc_07 | score=0.533] Chunk size (256 to 1024 tokens) and overlap (10 to 20 percent) are key hyperparameters that affect both retrieval precision and context coherence. Smaller chunks imp",
+      "observation": "Here is a 3-sentence summary of the text:\n\nThe performance of Retrieval-Augmented Generation (RAG) systems depends on hyperparameters such as chunk size and overlap, which balance precision and context coherence. RAG combines a retrieval component with a generative model to fetch relevant passages from an external corpus. The system's behavior can be shaped by prompt templates and instructions in "
     }
   ],
-  "final_answer": "[retriever] [doc_07 | score=0.533] Chunk size (256 to 1024 tokens) and overlap (10 to 20 percent) are key hyperparameters that affect both retrieval precision and context coherence. Smaller chunks improve precision but may lose context\n[doc_07 | score=0.484] Document chunking splits long texts into smaller passages that fit within the context window of the retriever and generator. Fixed-size chunking splits by a fixed token or character count with optiona\n[doc_04 | score=0.408] Modern RAG system",
-  "total_latency_ms": 1720.82,
+  "final_answer": "**Chunking strategies used in RAG pipelines include fixed-size chunking, where long texts are split into smaller passages of a fixed size (256-1024 tokens). Overlap matters because it affects context coherence and retrieval precision. Smaller chunks with overlap can improve precision but may lose context.**",
+  "total_latency_ms": 14648.85,
   "tool_calls": [
     {
       "tool": "retriever",
       "input": "Explain what chunking strategies are used in RAG pipelines and why overlap matters.",
       "output_snippet": "[doc_07 | score=0.533] Chunk size (256 to 1024 tokens) and overlap (10 to 20 percent) are key hyperparameters that affect both retrieval precision and context coherence. Smaller chunks improve precision but may lose context\n[doc_07 | score=0.484] Document chunking splits long texts into smaller pass",
-      "latency_ms": 868.14,
+      "latency_ms": 923.03,
       "success": true
     },
     {
-      "tool": "retriever",
-      "input": "Explain what chunking strategies are used in RAG pipelines and why overlap matters.",
-      "output_snippet": "[doc_07 | score=0.533] Chunk size (256 to 1024 tokens) and overlap (10 to 20 percent) are key hyperparameters that affect both retrieval precision and context coherence. Smaller chunks improve precision but may lose context\n[doc_07 | score=0.484] Document chunking splits long texts into smaller pass",
-      "latency_ms": 851.73,
+      "tool": "summarizer",
+      "input": "[retriever] [doc_07 | score=0.533] Chunk size (256 to 1024 tokens) and overlap (10 to 20 percent) are key hyperparameters that affect both retrieval precision and context coherence. Smaller chunks imp",
+      "output_snippet": "Here is a 3-sentence summary of the text:\n\nThe performance of Retrieval-Augmented Generation (RAG) systems depends on hyperparameters such as chunk size and overlap, which balance precision and context coherence. RAG combines a retrieval component with a generative model to fetch relevant passages f",
+      "latency_ms": 5556.32,
       "success": true
     }
   ],

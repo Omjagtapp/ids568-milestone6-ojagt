@@ -18,26 +18,48 @@
     },
     {
       "iteration": 3,
-      "thought": "I have enough information to produce a final answer.",
-      "action": "FINISH",
-      "observation": "Task complete."
+      "thought": "I will call retriever to gather more information.",
+      "action": "retriever",
+      "action_input": "Tell me about the weather forecast for tomorrow.",
+      "observation": "[doc_02 | score=0.135] BERT (Bidirectional Encoder Representations from Transformers) was introduced by Devlin et al. in 2018. Unlike GPT-style models that predict the next token left-to-right, BERT is pre-trained with a Ma\n[doc_03 | score=0.114] GPT (Generative Pre-trained Transformer) models generate text autoregressively: each token is conditioned on all preceding tokens. GPT-3 has 175 billion "
+    },
+    {
+      "iteration": 4,
+      "thought": "I have context. Now I will summarize it into a concise answer.",
+      "action": "summarizer",
+      "action_input": "[retriever] [doc_02 | score=0.135] BERT (Bidirectional Encoder Representations from Transformers) was introduced by Devlin et al. in 2018. Unlike GPT-style models that predict the next token left-to-r",
+      "observation": "Here is a summary of the text in 2-3 concise sentences:\n\nThe transformer model, introduced in 2017, relies entirely on self-attention mechanisms and has been used to develop various pre-trained language models such as BERT (Bidirectional Encoder Representations from Transformers) and GPT. Unlike traditional left-to-right token prediction, these models use bidirectional or autoregressive approaches"
     }
   ],
-  "final_answer": "[retriever] [doc_02 | score=0.135] BERT (Bidirectional Encoder Representations from Transformers) was introduced by Devlin et al. in 2018. Unlike GPT-style models that predict the next token left-to-right, BERT is pre-trained with a Ma\n[doc_03 | score=0.114] GPT (Generative Pre-trained Transformer) models generate text autoregressively: each token is conditioned on all preceding tokens. GPT-3 has 175 billion parameters and demonstrates impressive few-shot\n[doc_01 | score=0.095] Transformers are ",
-  "total_latency_ms": 1815.7,
+  "final_answer": "There is no information about the weather forecast for tomorrow in the provided context. The documents appear to be related to deep learning models and their applications. \n\nFinal Answer: There is not enough information available to provide a weather forecast for tomorrow.",
+  "total_latency_ms": 27146.27,
   "tool_calls": [
     {
       "tool": "retriever",
       "input": "Tell me about the weather forecast for tomorrow.",
       "output_snippet": "[doc_02 | score=0.135] BERT (Bidirectional Encoder Representations from Transformers) was introduced by Devlin et al. in 2018. Unlike GPT-style models that predict the next token left-to-right, BERT is pre-trained with a Ma\n[doc_03 | score=0.114] GPT (Generative Pre-trained Transformer) models gener",
-      "latency_ms": 953.46,
+      "latency_ms": 1135.74,
       "success": true
     },
     {
       "tool": "retriever",
       "input": "Tell me about the weather forecast for tomorrow.",
       "output_snippet": "[doc_02 | score=0.135] BERT (Bidirectional Encoder Representations from Transformers) was introduced by Devlin et al. in 2018. Unlike GPT-style models that predict the next token left-to-right, BERT is pre-trained with a Ma\n[doc_03 | score=0.114] GPT (Generative Pre-trained Transformer) models gener",
-      "latency_ms": 861.32,
+      "latency_ms": 928.81,
+      "success": true
+    },
+    {
+      "tool": "retriever",
+      "input": "Tell me about the weather forecast for tomorrow.",
+      "output_snippet": "[doc_02 | score=0.135] BERT (Bidirectional Encoder Representations from Transformers) was introduced by Devlin et al. in 2018. Unlike GPT-style models that predict the next token left-to-right, BERT is pre-trained with a Ma\n[doc_03 | score=0.114] GPT (Generative Pre-trained Transformer) models gener",
+      "latency_ms": 955.23,
+      "success": true
+    },
+    {
+      "tool": "summarizer",
+      "input": "[retriever] [doc_02 | score=0.135] BERT (Bidirectional Encoder Representations from Transformers) was introduced by Devlin et al. in 2018. Unlike GPT-style models that predict the next token left-to-r",
+      "output_snippet": "Here is a summary of the text in 2-3 concise sentences:\n\nThe transformer model, introduced in 2017, relies entirely on self-attention mechanisms and has been used to develop various pre-trained language models such as BERT (Bidirectional Encoder Representations from Transformers) and GPT. Unlike tra",
+      "latency_ms": 7575.21,
       "success": true
     }
   ],

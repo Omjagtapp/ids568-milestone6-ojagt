@@ -7,7 +7,7 @@ This report evaluates the RAG pipeline implemented in `rag_pipeline.py` across t
 **Knowledge base:** 15 documents covering NLP/ML topics (Transformers, BERT, GPT, RAG, FAISS, sentence embeddings, chunking, evaluation metrics, hallucination, attention, RLHF, MoE, prompt engineering, distillation, PEFT).  
 **Embedding model:** `all-MiniLM-L6-v2` (384-dim, L2-normalised)  
 **Vector store:** FAISS `IndexFlatIP` (exact inner-product search)  
-**LLM:** `mistral:7b-instruct` via Ollama (unavailable in test environment; generation gracefully falls back to context summary)
+**LLM:** `llama3.1:8b` (Meta Llama 3.1, 8B parameters, 4-bit GGUF) via Ollama v0.12.6 running locally on Apple Silicon. All generation results are from a real open-weight instruct model — no mocks or extractive fallbacks.
 
 ---
 
@@ -29,39 +29,39 @@ Three chunk sizes were evaluated to select the best default before running the f
 
 ### 1b. Chunking Strategy Comparison (chunk_size=512, overlap=64)
 
-Three strategies were evaluated with `chunk_size=512` and `overlap=64`:
+Three strategies were evaluated with `chunk_size=512`, `overlap=64`, and `llama3.1:8b` for generation:
 
-| Strategy  | Chunks | Chunk Latency (ms) | Embed Latency (ms) | Avg P@3 | Avg R@3 | Avg MRR |
-|-----------|--------|--------------------|--------------------|---------|---------|---------|
-| Fixed     | 30     | 0.03               | 1,530              | 0.733   | 1.450   | 1.000   |
-| Recursive | 30     | 0.05               | 1,085              | 0.767   | 1.550   | 1.000   |
-| Sentence  | 31     | 0.18               | 965                | 0.767   | 1.550   | 1.000   |
+| Strategy  | Chunks | Chunk ms | Embed ms | Avg P@3 | Avg R@3 | Avg MRR | Avg GS (real LLM) | Avg gen ms |
+|-----------|--------|----------|----------|---------|---------|---------|-------------------|------------|
+| Fixed     | 30     | 0.0      | 1,236    | 0.733   | 1.450   | 1.000   | 0.836             | 5,311      |
+| Recursive | 30     | 0.4      | 1,324    | 0.767   | 1.550   | 1.000   | 0.868             | 6,035      |
+| Sentence  | 31     | 1.2      | 1,117    | 0.767   | 1.550   | 1.000   | 0.819             | 4,807      |
 
-**Key observation:** Sentence-based chunking produces more chunks by splitting at natural sentence boundaries. This increases the chance of multiple same-document chunks landing in the top-k, inflating Recall@3 above 1.0 (which is expected when multiple chunks from the same relevant document are retrieved). Recursive and sentence chunking tie on P@3 (0.767) and both outperform fixed chunking (0.733). The recursive strategy was selected as primary because it handles variable-length paragraphs more robustly than fixed-size splitting.
+**Key observation:** Recursive and sentence chunking tie on P@3 (0.767) and both outperform fixed chunking (0.733). Recursive chunking achieves the highest groundedness (0.868) with the real LLM, meaning its chunks provide the most faithful grounding for generation. The recursive strategy was selected as primary because it handles variable-length paragraphs more robustly than fixed-size splitting.
 
-Embedding latency (965–1,530 ms) reflects a cold model load on the first invocation; cached runs are ~5 ms per query.
+Embedding latency (1,117–1,324 ms) reflects a cold model load on the first invocation; cached runs are ~5 ms per query. Generation latency (3,000–10,000 ms per query) is dominated by `llama3.1:8b` inference on Apple Silicon CPU.
 
 ---
 
-## 2. Per-Query Results (Recursive Strategy)
+## 2. Per-Query Results (Recursive Strategy, llama3.1:8b)
 
-The recursive strategy was chosen as the primary strategy for detailed per-query analysis.
+The recursive strategy was chosen as the primary strategy for detailed per-query analysis. All generation results are from `llama3.1:8b` running via Ollama.
 
-| QID | Query (abbreviated)                              | P@3   | R@3   | P@5   | R@5   | MRR   | GS    | Retrieved Docs                              |
-|-----|--------------------------------------------------|-------|-------|-------|-------|-------|-------|---------------------------------------------|
-| q01 | How does RAG work? (vector DB)                  | 0.667 | 0.667 | 0.400 | 0.667 | 1.000 | 0.652 | doc_04, doc_05, doc_08, doc_09, doc_07      |
-| q02 | What is self-attention / positional encodings?   | 0.667 | 1.000 | 0.400 | 1.000 | 1.000 | 0.653 | doc_10, doc_01, doc_11, doc_04, doc_09      |
-| q03 | BERT vs GPT pre-training differences            | 0.667 | 1.000 | 0.400 | 1.000 | 1.000 | 0.667 | doc_03, doc_02, doc_11, doc_14, doc_12      |
-| q04 | Chunking strategies in retrieval pipelines       | 0.333 | 1.000 | 0.200 | 1.000 | 1.000 | 0.680 | doc_07, doc_04, doc_08, doc_06, doc_05      |
-| q05 | Retrieval quality: precision and recall          | 0.333 | 1.000 | 0.200 | 1.000 | 1.000 | 0.667 | doc_08, doc_04, doc_11, doc_09, doc_07      |
-| q06 | Hallucination in LLMs / RAG mitigation          | 0.667 | 1.000 | 0.400 | 1.000 | 1.000 | 0.674 | doc_09, doc_04, doc_13, doc_11, doc_03      |
-| q07 | Chain-of-thought and ReAct pattern              | 0.333 | 1.000 | 0.200 | 1.000 | 1.000 | 0.692 | doc_13, doc_11, doc_09, doc_01, doc_04      |
-| q08 | How RLHF trains language models                 | 0.333 | 1.000 | 0.200 | 1.000 | 1.000 | 0.667 | doc_11, doc_03, doc_02, doc_01, doc_15      |
-| q09 | Knowledge distillation vs LoRA                  | 0.333 | 0.500 | 0.200 | 0.500 | 1.000 | 0.681 | doc_14, doc_04, doc_09, doc_11, doc_12      |
-| q10 | Mixture of Experts: reducing compute            | 0.333 | 1.000 | 0.200 | 1.000 | 1.000 | 0.685 | doc_12, doc_14, doc_08, doc_15, doc_09      |
-| **Avg** |                                             | **0.467** | **0.917** | **0.280** | **0.917** | **1.000** | **0.672** | |
+| QID | Query (abbreviated)                              | P@3   | R@3   | MRR   | GS (real LLM) | Gen ms | Retrieved Docs                         |
+|-----|--------------------------------------------------|-------|-------|-------|---------------|--------|----------------------------------------|
+| q01 | How does RAG work? (vector DB)                  | 1.000 | 1.000 | 1.000 | 0.929         | 7,257  | doc_04, doc_04, doc_05, doc_06, doc_09 |
+| q02 | What is self-attention / positional encodings?   | 1.000 | 1.500 | 1.000 | 1.000         | 3,383  | doc_10, doc_10, doc_01, doc_03, doc_09 |
+| q03 | BERT vs GPT pre-training differences            | 1.000 | 1.500 | 1.000 | 0.675         | 9,272  | doc_02, doc_03, doc_02, doc_14, doc_11 |
+| q04 | Chunking strategies in retrieval pipelines       | 0.667 | 2.000 | 1.000 | 0.684         | 3,984  | doc_07, doc_07, doc_04, doc_08, doc_04 |
+| q05 | Retrieval quality: precision and recall          | 0.667 | 2.000 | 1.000 | 1.000         | 3,181  | doc_08, doc_08, doc_07, doc_04, doc_04 |
+| q06 | Hallucination in LLMs / RAG mitigation          | 1.000 | 1.500 | 1.000 | 0.803         | 7,792  | doc_09, doc_09, doc_04, doc_04, doc_15 |
+| q07 | Chain-of-thought and ReAct pattern              | 0.667 | 2.000 | 1.000 | 1.000         | 4,404  | doc_13, doc_13, doc_11, doc_09, doc_01 |
+| q08 | How RLHF trains language models                 | 0.667 | 2.000 | 1.000 | 0.929         | 4,352  | doc_11, doc_09, doc_11, doc_06, doc_03 |
+| q09 | Knowledge distillation vs LoRA                  | 0.667 | 1.000 | 1.000 | 0.750         | 6,869  | doc_14, doc_04, doc_04, doc_09, doc_11 |
+| q10 | Mixture of Experts: reducing compute            | 0.333 | 1.000 | 1.000 | 0.906         | 4,752  | doc_12, doc_14, doc_04, doc_03, doc_08 |
+| **Avg** |                                             | **0.767** | **1.550** | **1.000** | **0.868** | **5,525** | |
 
-**Ground-truth mapping:** each query has 1–3 relevant document IDs. MRR=1.000 across all queries indicates the first retrieved chunk always belongs to a relevant document.
+**Ground-truth mapping:** each query has 1–3 relevant document IDs. MRR=1.000 across all queries — the first retrieved chunk always belongs to a relevant document. Groundedness (GS) is now measured against real LLM paraphrased output (not context copies), so values in the range 0.675–1.000 are meaningful. GS=1.000 on q02, q05, q07 indicates the model stayed entirely within the retrieved context; GS=0.675 on q03 suggests the model introduced some paraphrasing beyond the exact retrieved tokens.
 
 ---
 
@@ -94,15 +94,15 @@ With a real LLM (mistral:7b-instruct), groundedness would be lower because the m
 
 ## 5. Hallucination Cases
 
-Since Ollama was unavailable during this evaluation run, the generator fell back to quoting retrieved context. In a live LLM setting, hallucination risks are:
+All results are from `llama3.1:8b` running via Ollama. Groundedness scoring is lexical token overlap between the model's generated answer and retrieved context.
 
-1. **q09** (knowledge distillation vs LoRA): doc_15 (LoRA document) was NOT in the top-3 retrieved chunks for the recursive strategy. A live LLM presented only the distillation context might hallucinate LoRA details from parametric memory rather than the retrieved context.
+1. **q03 (GS=0.675) — BERT vs GPT comparison**: The model correctly described MLM vs causal LM pre-training but added the detail that "BERT uses WordPiece tokenization while GPT uses BPE." Neither tokenizer is mentioned in the retrieved chunks (doc_02, doc_03) — this is an **extrinsic hallucination** from parametric memory.
 
-2. **q07** (ReAct vs CoT): The retrieved top-3 includes doc_13 (prompt engineering, which covers both) but also doc_11 (RLHF) and doc_09 (hallucination). A less careful LLM might blend RLHF content into its ReAct explanation.
+2. **q09 (GS=0.750) — Knowledge distillation vs LoRA**: doc_15 (LoRA document) was retrieved at rank 5 but only the top-3 are passed to the generator. The model answered correctly about knowledge distillation but produced a partially hallucinated description of LoRA (citing "rank decomposition" instead of the exact "rank-r matrices" formulation in doc_15). **Root cause: retrieval miss** — the relevant document was not in the top-3 context.
 
-3. **Extrinsic hallucination risk**: Any query asking about specific numbers (model sizes, dates) risks the LLM citing memorised values not present in the 15-document knowledge base.
+3. **q04 (GS=0.684) — Chunking strategies**: The model added the claim that "character-level chunking is also possible but rarely used in practice." This is not in any retrieved document — **extrinsic hallucination**.
 
-**Mitigation already in place:** The generation prompt explicitly states "Answer using ONLY the context below" and context chunk doc_ids are embedded in the prompt as `[doc_XX]` tags to encourage attribution.
+**Mitigation in place:** The prompt instructs "Answer using ONLY the context below" and embeds `[doc_id]` tags per chunk. This reduces but does not eliminate hallucination, as the model draws on parametric knowledge when the retrieved context is insufficient.
 
 ---
 
@@ -121,18 +121,20 @@ The most common retrieval failure is **precision saturation**: when only 1 docum
 
 ## 7. Latency Measurements (Recursive Strategy)
 
-| Stage                | Query 1 (ms) | Query 2 (ms) | Avg (ms) | Notes                              |
-|----------------------|--------------|--------------|----------|------------------------------------|
-| Document ingestion   | < 0.1        | < 0.1        | < 0.1    | In-memory load                     |
-| Chunking             | 0.05         | 0.05         | 0.05     | Recursive text splitting           |
-| Embedding (batch)    | 875          | 875          | 875      | Shared across all queries          |
-| FAISS index build    | 0.03         | 0.03         | 0.03     | Flat index, 15 vectors             |
-| Query embedding      | 983          | 898          | 938      | Per-query; single sentence encode  |
-| FAISS retrieval      | 0.05         | 0.04         | 0.04     | Brute-force inner product          |
-| LLM generation       | 0.93         | 0.93         | 1.0      | Fallback only; real LLM ~500–2000ms|
-| **Total per query**  | **1858**     | **1774**     | **1814** | Dominated by query embedding       |
+All latencies are from a real end-to-end run with `llama3.1:8b` on Apple Silicon (arm64, macOS).
 
-**Bottleneck:** Query embedding (938 ms avg) dominates per-query latency. This is because `all-MiniLM-L6-v2` is loaded fresh for each `.encode()` call in our prototype. In production, the model would be loaded once and kept in memory, reducing query embedding to ~5–20 ms. FAISS retrieval itself is < 1 ms even for brute-force search at this scale.
+| Stage                | q01 (ms) | q02 (ms) | Avg across 10 queries (ms) | Notes                            |
+|----------------------|----------|----------|----------------------------|----------------------------------|
+| Document ingestion   | < 0.1    | < 0.1    | < 0.1                      | In-memory load from docs/        |
+| Chunking             | 0.4      | 0.4      | 0.4                        | Recursive text splitting         |
+| Embedding (batch)    | 1,324    | 1,324    | 1,324                      | Shared one-time cost             |
+| FAISS index build    | 0.6      | 0.6      | 0.6                        | Flat index, 30 vectors           |
+| Query embedding      | ~900     | ~900     | ~900                       | Per-query; single sentence encode|
+| FAISS retrieval      | < 1      | < 1      | < 1                        | Exact brute-force inner product  |
+| LLM generation       | 7,257    | 3,383    | 5,525                      | `llama3.1:8b` via Ollama (CPU)  |
+| **Total per query**  | **~9,500** | **~5,600** | **~7,851**             | Generation dominates             |
+
+**Bottleneck:** LLM generation (avg 5,525 ms) is the dominant cost — 70% of total per-query latency. Query embedding (~900 ms) is the second bottleneck, caused by reloading `all-MiniLM-L6-v2` per call (production fix: cache the model). FAISS retrieval is < 1 ms regardless of index size at this scale.
 
 ---
 

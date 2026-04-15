@@ -17,21 +17,21 @@
       "observation": "Key terms: GPT, PEFT, BA, GPU, Generative Pre, Rank Adaptation. Numeric values: 0.367, 0.335, 3 , 175 billion, 0.278, 0.234, 0.222, 4, 65B."
     }
   ],
-  "final_answer": "[extractor] Key terms: GPT, PEFT, BA, GPU, Generative Pre, Rank Adaptation. Numeric values: 0.367, 0.335, 3 , 175 billion, 0.278, 0.234, 0.222, 4, 65B.",
-  "total_latency_ms": 890.56,
+  "final_answer": "The key numeric facts about GPT-3 and DistilBERT model sizes are:\n\n* GPT-3 has 175 billion parameters.\n* DistilBERT is implied to have a smaller size, but the exact size is not provided in the context. However, QLoRA mentions fine-tuning of 65B parameter models, which might be referring to DistilBERT.",
+  "total_latency_ms": 10455.93,
   "tool_calls": [
     {
       "tool": "retriever",
       "input": "Extract key numeric facts about GPT-3 and DistilBERT model sizes.",
       "output_snippet": "[doc_03 | score=0.367] GPT models use a decoder-only transformer architecture without the cross-attention layers present in the original encoder-decoder design.\n[doc_03 | score=0.335] GPT (Generative Pre-trained Transformer) models generate text autoregressively: each token is conditioned on all pre",
-      "latency_ms": 889.8,
+      "latency_ms": 1209.32,
       "success": true
     },
     {
       "tool": "extractor",
       "input": "[retriever] [doc_03 | score=0.367] GPT models use a decoder-only transformer architecture without the cross-attention layers present in the original encoder-decoder design.\n[doc_03 | score=0.335] GPT ",
       "output_snippet": "Key terms: GPT, PEFT, BA, GPU, Generative Pre, Rank Adaptation. Numeric values: 0.367, 0.335, 3 , 175 billion, 0.278, 0.234, 0.222, 4, 65B.",
-      "latency_ms": 0.28,
+      "latency_ms": 0.08,
       "success": true
     }
   ],

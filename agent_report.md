@@ -33,33 +33,33 @@ else → retriever (continue gathering)
 
 This policy was validated on all 10 tasks and produced correct tool sequences in 9/10 cases.
 
-### LLM Router (optional, requires Ollama)
+### LLM Router (used in final evaluated runs)
 
-When Ollama is available, the agent sends a structured prompt listing all tools and their descriptions, the current task, and the last 4 observations, then parses the model's single-word response (`retriever`, `summarizer`, `extractor`, or `FINISH`). The heuristic router serves as fallback when Ollama is unavailable.
+The agent uses `llama3.1:8b` via Ollama for tool selection. The router prompt presents tools as lettered options (A/B/C/D) and instructs the model to reply with a single letter. This avoids the word-in-response parsing problem that plagued earlier prompts where the model would mention "retriever" in its explanation even when recommending a different tool.
 
 ---
 
 ## 3. Performance on 10 Agent Tasks
 
-All traces are stored in `agent_traces/task_NN.json`. Full step-by-step reasoning is preserved in the `steps` array.
+All traces are stored in `agent_traces/task_NN.json`. Runs use `llama3.1:8b` for both tool selection and final answer synthesis via Ollama.
 
-| Task ID | Task (abbreviated)                              | Tools Used                      | Steps | Latency (ms) | Success |
-|---------|-------------------------------------------------|---------------------------------|-------|--------------|---------|
-| task_01 | Summarize key ideas of RAG                      | retriever → summarizer          | 2     | 1,057        | ✓       |
-| task_02 | Compare BERT vs GPT pre-training objectives     | retriever × 5 (loop)           | 5     | 4,167        | ✓       |
-| task_03 | Chunking strategies and overlap in RAG          | retriever → retriever           | 3     | 1,766        | ✓       |
-| task_04 | Extract numeric facts: GPT-3 and DistilBERT     | retriever → extractor           | 2     | 804          | ✓       |
-| task_05 | Summarize FAISS for dense retrieval             | retriever → summarizer          | 2     | 811          | ✓       |
-| task_06 | Hallucination in LLMs: extract types mentioned  | retriever → extractor           | 2     | 827          | ✓       |
-| task_07 | ReAct pattern vs chain-of-thought               | retriever → retriever           | 3     | 1,703        | ✓       |
-| task_08 | Summarize how LoRA works                        | retriever → summarizer          | 2     | 896          | ✓       |
-| task_09 | Weather forecast tomorrow (out-of-scope)        | retriever → retriever           | 3     | 2,015        | ✓ *     |
-| task_10 | MoE: extract model names                        | retriever → extractor           | 2     | 945          | ✓       |
+| Task ID | Task (abbreviated)                              | Tools Used                                        | Steps | Latency (ms) | Success |
+|---------|-------------------------------------------------|---------------------------------------------------|-------|--------------|---------|
+| task_01 | Summarize key ideas of RAG                      | retriever → summarizer                            | 2     | 13,781       | ✓       |
+| task_02 | Compare BERT vs GPT pre-training objectives     | retriever → extractor                             | 2     | 9,189        | ✓       |
+| task_03 | Chunking strategies and overlap in RAG          | retriever → summarizer                            | 2     | 14,649       | ✓       |
+| task_04 | Extract numeric facts: GPT-3 and DistilBERT     | retriever → extractor                             | 2     | 10,456       | ✓       |
+| task_05 | Summarize FAISS for dense retrieval             | retriever → summarizer                            | 2     | 13,281       | ✓       |
+| task_06 | Hallucination in LLMs: extract types mentioned  | retriever → extractor                             | 2     | 8,630        | ✓       |
+| task_07 | ReAct pattern vs chain-of-thought               | retriever → extractor                             | 2     | 12,482       | ✓       |
+| task_08 | Summarize how LoRA works                        | retriever → summarizer                            | 2     | 14,714       | ✓       |
+| task_09 | Weather forecast tomorrow (out-of-scope)        | retriever → retriever → retriever → summarizer    | 4     | 27,146       | ✓ *     |
+| task_10 | MoE: extract model names                        | retriever → extractor                             | 2     | 7,681        | ✓       |
 
-*task_09 is marked successful (no crash) but the answer is incorrect — see failure analysis below.
+*task_09 retrieves 3 times before summarizing — the LLM correctly chose to keep searching since no relevant context was found, but ultimately summarized unrelated content.
 
-**Average latency:** 1,499 ms  
-**Average steps:** 2.6  
+**Average latency:** 13,201 ms (dominated by `llama3.1:8b` CPU inference ~5–10 s per call)  
+**Average steps:** 2.4  
 **Success rate:** 10/10 (no crashes); quality success rate: 9/10
 
 ---

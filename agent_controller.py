@@ -155,33 +155,60 @@ TOOL_DESCRIPTIONS = {
 # ---------------------------------------------------------------------------
 
 _SELECTION_PROMPT = """\
-You are an AI assistant that selects the best tool.
+You are a tool-routing agent. Choose the next tool to call.
 
-Available tools:
-{tool_list}
+Tools (pick exactly one):
+  A) retriever   – search knowledge base for relevant passages
+  B) summarizer  – condense gathered context into a concise answer
+  C) extractor   – pull named entities / numeric facts from context
+  D) FINISH      – enough information has been gathered; stop
 
 Task: {task}
-Conversation so far:
+
+Steps taken so far ({n_steps} steps):
 {context}
 
-Which tool should be called next? Reply with EXACTLY one word: retriever, summarizer, extractor, or FINISH.
-If the task is answered, reply FINISH."""
+Rules:
+- If no information has been gathered yet, choose A (retriever).
+- If the task asks to "summarize" or "compare" and you already have retrieved passages, choose B (summarizer).
+- If the task asks to "extract", "find names", or "find numbers" and you have passages, choose C (extractor).
+- If the task is an out-of-scope question or the context clearly answers the task, choose D (FINISH).
+- Do NOT choose A (retriever) if you already retrieved information in a previous step.
+
+Reply with ONLY the letter: A, B, C, or D."""
 
 
 def select_tool_llm(task: str, context: List[str], llm_model: str) -> str:
     prompt = _SELECTION_PROMPT.format(
-        tool_list="\n".join(f"  {k}: {v}" for k, v in TOOL_DESCRIPTIONS.items()),
         task=task,
-        context="\n".join(context[-4:]) if context else "(none)",
+        n_steps=len(context),
+        context="\n".join(context[-3:]) if context else "(none yet)",
     )
     try:
         import ollama
         resp = ollama.chat(model=llm_model, messages=[{"role": "user", "content": prompt}])
-        raw = resp["message"]["content"].strip().lower()
-        for tool in ["retriever", "summarizer", "extractor", "finish"]:
-            if tool in raw:
-                return tool if tool != "finish" else "FINISH"
-        return "retriever"
+        raw = resp["message"]["content"].strip().upper()
+        # Parse letter answer first
+        if raw.startswith("A"):
+            return "retriever"
+        if raw.startswith("B"):
+            return "summarizer"
+        if raw.startswith("C"):
+            return "extractor"
+        if raw.startswith("D"):
+            return "FINISH"
+        # Fall back to keyword scan on full response
+        raw_lower = raw.lower()
+        if "finish" in raw_lower or "done" in raw_lower or "enough" in raw_lower:
+            return "FINISH"
+        if "summar" in raw_lower:
+            return "summarizer"
+        if "extract" in raw_lower:
+            return "extractor"
+        if "retriev" in raw_lower:
+            return "retriever"
+        # Default: if we have context, synthesize; otherwise retrieve
+        return "FINISH" if context else "retriever"
     except Exception:
         return _select_tool_heuristic(task, context)
 

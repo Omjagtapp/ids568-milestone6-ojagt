@@ -17,21 +17,21 @@
       "observation": "Key terms: FFN, Attention Is All You Need. Numeric values: 0.305, 2 , 8, 0.298, 0.226, 0.218, 2017, 0.214."
     }
   ],
-  "final_answer": "[extractor] Key terms: FFN, Attention Is All You Need. Numeric values: 0.305, 2 , 8, 0.298, 0.226, 0.218, 2017, 0.214.",
-  "total_latency_ms": 952.77,
+  "final_answer": "**Mixture of Experts model names mentioned:** Mixture of Experts (MoE) \n\nLet me know if you need more information about this model!",
+  "total_latency_ms": 7680.92,
   "tool_calls": [
     {
       "tool": "retriever",
       "input": "Find information about Mixture of Experts and extract the model names mentioned.",
       "output_snippet": "[doc_12 | score=0.305] Mixture of Experts (MoE) scales model capacity without proportionally increasing compute. A gating network routes each token to a subset of expert FFN layers (typically top-2 out of 8). Only the selec\n[doc_14 | score=0.298] Knowledge distillation trains a smaller student model",
-      "latency_ms": 952.23,
+      "latency_ms": 1102.43,
       "success": true
     },
     {
       "tool": "extractor",
       "input": "[retriever] [doc_12 | score=0.305] Mixture of Experts (MoE) scales model capacity without proportionally increasing compute. A gating network routes each token to a subset of expert FFN layers (typica",
       "output_snippet": "Key terms: FFN, Attention Is All You Need. Numeric values: 0.305, 2 , 8, 0.298, 0.226, 0.218, 2017, 0.214.",
-      "latency_ms": 0.06,
+      "latency_ms": 0.04,
       "success": true
     }
   ],

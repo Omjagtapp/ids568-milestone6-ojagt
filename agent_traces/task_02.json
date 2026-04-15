@@ -11,41 +11,27 @@
     },
     {
       "iteration": 2,
-      "thought": "I will call retriever to gather more information.",
-      "action": "retriever",
-      "action_input": "Find information about BERT and GPT, then compare their pre-training objectives.",
-      "observation": "[doc_02 | score=0.545] BERT (Bidirectional Encoder Representations from Transformers) was introduced by Devlin et al. in 2018. Unlike GPT-style models that predict the next token left-to-right, BERT is pre-trained with a Ma\n[doc_03 | score=0.441] GPT (Generative Pre-trained Transformer) models generate text autoregressively: each token is conditioned on all preceding tokens. GPT-3 has 175 billion "
-    },
-    {
-      "iteration": 3,
-      "thought": "I have context. Now I will summarize it into a concise answer.",
-      "action": "summarizer",
+      "thought": "I will extract key entities and numeric facts from the gathered context.",
+      "action": "extractor",
       "action_input": "[retriever] [doc_02 | score=0.545] BERT (Bidirectional Encoder Representations from Transformers) was introduced by Devlin et al. in 2018. Unlike GPT-style models that predict the next token left-to-r",
-      "observation": "[retriever] [doc_02 | score=0.545] BERT (Bidirectional Encoder Representations from Transformers) was introduced by Devlin et al. in 2018.  [Ollama unavailable \u2013 Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download]"
+      "observation": "Key terms: BERT, GPT, LLM, RLHF, Bidirectional Encoder Representations, Generative Pre, Reinforcement Learning, Human Feedback. Numeric values: 0.545, 2018, 0.441, 3 , 175 billion, 0.441, 340 million, 110 million, 0.386, 0.364."
     }
   ],
-  "final_answer": "[summarizer] [retriever] [doc_02 | score=0.545] BERT (Bidirectional Encoder Representations from Transformers) was introduced by Devlin et al. in 2018.  [Ollama unavailable \u2013 Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download]",
-  "total_latency_ms": 1672.39,
+  "final_answer": "The pre-training objectives of BERT and GPT are different:\n\n* BERT is pre-trained with a masked language modeling objective using contrastive loss with positive and negative sentence pairs.\n* GPT models are pre-trained autoregressively, predicting the next token based on all preceding tokens.",
+  "total_latency_ms": 9189.36,
   "tool_calls": [
     {
       "tool": "retriever",
       "input": "Find information about BERT and GPT, then compare their pre-training objectives.",
       "output_snippet": "[doc_02 | score=0.545] BERT (Bidirectional Encoder Representations from Transformers) was introduced by Devlin et al. in 2018. Unlike GPT-style models that predict the next token left-to-right, BERT is pre-trained with a Ma\n[doc_03 | score=0.441] GPT (Generative Pre-trained Transformer) models gener",
-      "latency_ms": 869.91,
+      "latency_ms": 1227.35,
       "success": true
     },
     {
-      "tool": "retriever",
-      "input": "Find information about BERT and GPT, then compare their pre-training objectives.",
-      "output_snippet": "[doc_02 | score=0.545] BERT (Bidirectional Encoder Representations from Transformers) was introduced by Devlin et al. in 2018. Unlike GPT-style models that predict the next token left-to-right, BERT is pre-trained with a Ma\n[doc_03 | score=0.441] GPT (Generative Pre-trained Transformer) models gener",
-      "latency_ms": 800.62,
-      "success": true
-    },
-    {
-      "tool": "summarizer",
+      "tool": "extractor",
       "input": "[retriever] [doc_02 | score=0.545] BERT (Bidirectional Encoder Representations from Transformers) was introduced by Devlin et al. in 2018. Unlike GPT-style models that predict the next token left-to-r",
-      "output_snippet": "[retriever] [doc_02 | score=0.545] BERT (Bidirectional Encoder Representations from Transformers) was introduced by Devlin et al. in 2018.  [Ollama unavailable \u2013 Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download]",
-      "latency_ms": 1.4,
+      "output_snippet": "Key terms: BERT, GPT, LLM, RLHF, Bidirectional Encoder Representations, Generative Pre, Reinforcement Learning, Human Feedback. Numeric values: 0.545, 2018, 0.441, 3 , 175 billion, 0.441, 340 million, 110 million, 0.386, 0.364.",
+      "latency_ms": 0.32,
       "success": true
     }
   ],

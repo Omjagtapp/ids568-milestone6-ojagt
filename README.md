@@ -71,25 +71,31 @@ Task → Tool Selector (heuristic or LLM) → Tool Execution → Observation
 
 ## Model Deployment
 
-| Property             | Value                                      |
-|----------------------|--------------------------------------------|
-| Model name           | `mistral:7b-instruct`                      |
-| Size class           | 7B parameters                              |
-| Serving stack        | Ollama (local HTTP server on port 11434)   |
-| Quantisation         | 4-bit GGUF (default Ollama download)       |
-| Hardware tested      | Apple Silicon M-series (arm64, macOS)     |
-| Minimum RAM          | 8 GB (model fits in unified memory)        |
-| Typical generation latency | 500–2,000 ms per query (Apple M1/M2) |
-| CPU fallback latency | 3,000–8,000 ms per query (x86 CPU only)  |
-| Embedding model      | `all-MiniLM-L6-v2` (384-dim, ~90 MB)      |
-| Embedding latency    | ~5 ms per query (model cached in memory)   |
+| Property                   | Value                                          |
+|----------------------------|------------------------------------------------|
+| Model name (evaluated)     | `llama3.1:8b`                                  |
+| Model family               | Meta Llama 3.1                                 |
+| Size class                 | 8B parameters                                  |
+| Quantisation               | 4-bit GGUF (default Ollama download, ~4.9 GB)  |
+| Serving stack              | Ollama v0.12.6 (local HTTP server, port 11434) |
+| Hardware tested            | Apple Silicon M-series (arm64, macOS)          |
+| Minimum RAM                | 8 GB unified memory                            |
+| Typical generation latency | 3,000–10,000 ms per query (Apple M1/M2 CPU)   |
+| Embedding model            | `all-MiniLM-L6-v2` (384-dim, ~90 MB)          |
+| Embedding latency          | ~5 ms per query (model cached in memory)       |
+| Alternative model          | `mistral:7b-instruct` (also compatible)        |
+
+**Evaluated runs use `llama3.1:8b` — a real open-weight 8B instruct model running locally via Ollama. No proprietary APIs are used.**
 
 Start the model server before running any generation:
 
 ```bash
-ollama serve                      # start server (background)
-ollama pull mistral:7b-instruct   # download model (~4 GB)
-ollama list                       # verify it appears
+ollama serve                  # start Ollama server (runs in background)
+ollama pull llama3.1:8b       # download model (~4.9 GB, one-time)
+ollama list                   # verify: should show llama3.1:8b
+
+# Alternative (also supported):
+ollama pull mistral:7b-instruct
 ```
 
 ---

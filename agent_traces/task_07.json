@@ -11,33 +11,27 @@
     },
     {
       "iteration": 2,
-      "thought": "I will call retriever to gather more information.",
-      "action": "retriever",
-      "action_input": "What is the ReAct prompting pattern and how does it differ from chain-of-thought?",
-      "observation": "[doc_13 | score=0.667] Prompt engineering designs inputs to elicit desired LLM behaviour without parameter updates. Few-shot prompting includes examples in the context. Chain-of-thought (CoT) prompting instructs the model t\n[doc_13 | score=0.349] Self-consistency prompting samples multiple reasoning chains and takes the majority answer. Prompt templates and system instructions shape model behaviou"
-    },
-    {
-      "iteration": 3,
-      "thought": "I have enough information to produce a final answer.",
-      "action": "FINISH",
-      "observation": "Task complete."
+      "thought": "I will extract key entities and numeric facts from the gathered context.",
+      "action": "extractor",
+      "action_input": "[retriever] [doc_13 | score=0.667] Prompt engineering designs inputs to elicit desired LLM behaviour without parameter updates. Few-shot prompting includes examples in the context. Chain-of-thought (C",
+      "observation": "Key terms: LLM, RLHF, Reinforcement Learning, Human Feedback. Numeric values: 0.667, 0.349, 0.314, 0.295, 0.269."
     }
   ],
-  "final_answer": "[retriever] [doc_13 | score=0.667] Prompt engineering designs inputs to elicit desired LLM behaviour without parameter updates. Few-shot prompting includes examples in the context. Chain-of-thought (CoT) prompting instructs the model t\n[doc_13 | score=0.349] Self-consistency prompting samples multiple reasoning chains and takes the majority answer. Prompt templates and system instructions shape model behaviour in production deployments.\n[doc_09 | score=0.314] Hallucination refers to LLM outputs ",
-  "total_latency_ms": 1750.36,
+  "final_answer": "The ReAct prompting pattern is not explicitly mentioned in the provided context, but I can infer that it might be related to another technique since Chain-of-Thought (CoT) prompting is discussed. However, based on the information given:\n\nChain-of-Thought (CoT) prompting differs from what we can assume might be ReAct in its instructive approach, as CoT explicitly provides multiple reasoning steps or chains for the model to follow.\n\nSince ReAct isn't detailed in the provided context, and without further specification, it's challenging to provide a specific difference between ReAct and Chain-of-Thought prompting.",
+  "total_latency_ms": 12482.21,
   "tool_calls": [
     {
       "tool": "retriever",
       "input": "What is the ReAct prompting pattern and how does it differ from chain-of-thought?",
       "output_snippet": "[doc_13 | score=0.667] Prompt engineering designs inputs to elicit desired LLM behaviour without parameter updates. Few-shot prompting includes examples in the context. Chain-of-thought (CoT) prompting instructs the model t\n[doc_13 | score=0.349] Self-consistency prompting samples multiple reasoning",
-      "latency_ms": 835.69,
+      "latency_ms": 1071.75,
       "success": true
     },
     {
-      "tool": "retriever",
-      "input": "What is the ReAct prompting pattern and how does it differ from chain-of-thought?",
-      "output_snippet": "[doc_13 | score=0.667] Prompt engineering designs inputs to elicit desired LLM behaviour without parameter updates. Few-shot prompting includes examples in the context. Chain-of-thought (CoT) prompting instructs the model t\n[doc_13 | score=0.349] Self-consistency prompting samples multiple reasoning",
-      "latency_ms": 913.88,
+      "tool": "extractor",
+      "input": "[retriever] [doc_13 | score=0.667] Prompt engineering designs inputs to elicit desired LLM behaviour without parameter updates. Few-shot prompting includes examples in the context. Chain-of-thought (C",
+      "output_snippet": "Key terms: LLM, RLHF, Reinforcement Learning, Human Feedback. Numeric values: 0.667, 0.349, 0.314, 0.295, 0.269.",
+      "latency_ms": 0.04,
       "success": true
     }
   ],
