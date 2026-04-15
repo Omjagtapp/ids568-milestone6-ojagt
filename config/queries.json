@@ -1,0 +1,54 @@
+{
+  "queries": [
+    {
+      "id": "q01",
+      "text": "How does RAG work and what vector database is used?",
+      "relevant_docs": ["doc_04", "doc_05", "doc_06"]
+    },
+    {
+      "id": "q02",
+      "text": "What is self-attention and how are positional encodings used?",
+      "relevant_docs": ["doc_01", "doc_10"]
+    },
+    {
+      "id": "q03",
+      "text": "What are the differences between BERT and GPT pre-training?",
+      "relevant_docs": ["doc_02", "doc_03"]
+    },
+    {
+      "id": "q04",
+      "text": "What chunking strategies are used in document retrieval pipelines?",
+      "relevant_docs": ["doc_07"]
+    },
+    {
+      "id": "q05",
+      "text": "How is retrieval quality measured with precision and recall?",
+      "relevant_docs": ["doc_08"]
+    },
+    {
+      "id": "q06",
+      "text": "What is hallucination in LLMs and how does RAG mitigate it?",
+      "relevant_docs": ["doc_09", "doc_04"]
+    },
+    {
+      "id": "q07",
+      "text": "Explain chain-of-thought prompting and the ReAct pattern.",
+      "relevant_docs": ["doc_13"]
+    },
+    {
+      "id": "q08",
+      "text": "How does RLHF train language models to follow instructions?",
+      "relevant_docs": ["doc_11"]
+    },
+    {
+      "id": "q09",
+      "text": "What is knowledge distillation and how does LoRA differ from it?",
+      "relevant_docs": ["doc_14", "doc_15"]
+    },
+    {
+      "id": "q10",
+      "text": "What is Mixture of Experts and how does it reduce compute?",
+      "relevant_docs": ["doc_12"]
+    }
+  ]
+}

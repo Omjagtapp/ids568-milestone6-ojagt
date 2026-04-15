@@ -1,0 +1,3 @@
+Title: Vector Databases and Approximate Nearest Neighbour Search
+
+Vector databases store high-dimensional embeddings and support efficient similarity search. FAISS (Facebook AI Similarity Search) provides exact and approximate nearest-neighbour (ANN) methods including Flat (brute-force), IVF (inverted file), and HNSW. Indexing trade-offs balance memory, build time, and query latency. Cosine similarity and inner-product search are common metrics for dense retrieval. FAISS supports both CPU and GPU execution and can index billions of vectors. The IndexFlatIP index performs exact inner-product search and is suitable for small-to-medium corpora.

@@ -4,33 +4,33 @@
   "steps": [
     {
       "iteration": 1,
-      "thought": "I will use the retriever tool to gather more information.",
+      "thought": "I will call retriever to gather more information.",
       "action": "retriever",
       "action_input": "Summarize how FAISS enables efficient similarity search for dense retrieval.",
-      "observation": "[doc_05 | score=0.659] Vector databases store high-dimensional embeddings and support efficient similarity search. FAISS (Facebook AI Similarity Search) provides exact and approximate nearest-neighbour (ANN) methods includi\n[doc_06 | score=0.465] Sentence Transformers (SBERT) fine-tune transformer models using siamese and triplet networks so that semantically similar sentences map to nearby points"
+      "observation": "[doc_05 | score=0.653] Vector databases store high-dimensional embeddings and support efficient similarity search. FAISS (Facebook AI Similarity Search) provides exact and approximate nearest-neighbour (ANN) methods includi\n[doc_04 | score=0.495] Retrieval-Augmented Generation (RAG) combines a retrieval component with a generative model. Given a query, a retriever fetches relevant passages from an"
     },
     {
       "iteration": 2,
-      "thought": "I have retrieved context. Now I will summarize it to form a concise answer.",
+      "thought": "I have context. Now I will summarize it into a concise answer.",
       "action": "summarizer",
-      "action_input": "[retriever] [doc_05 | score=0.659] Vector databases store high-dimensional embeddings and support efficient similarity search. FAISS (Facebook AI Similarity Search) provides exact and approximate near",
-      "observation": "[retriever] [doc_05 | score=0.659] Vector databases store high-dimensional embeddings and support efficient similarity search. FAISS (Facebook AI Similarity Search) provides exact and approximate nearest-neighbour (ANN) methods includi\n[doc_06 | score=0.465] Sentence Transformers (SBERT) fine-tune transformer models using siamese and triplet networks so that semantically similar sentences map to n"
+      "action_input": "[retriever] [doc_05 | score=0.653] Vector databases store high-dimensional embeddings and support efficient similarity search. FAISS (Facebook AI Similarity Search) provides exact and approximate near",
+      "observation": "[retriever] [doc_05 | score=0.653] Vector databases store high-dimensional embeddings and support efficient similarity search. FAISS (Facebook AI Similarity Search) provides exact and approximate nearest-neighbour (ANN) methods includi\n[doc_04 | score=0.495] Retrieval-Augmented Generation (RAG) combines a retrieval component with a generative model.  [Ollama unavailable \u2013 Failed to connect to Olla"
     }
   ],
-  "final_answer": "[summarizer] [retriever] [doc_05 | score=0.659] Vector databases store high-dimensional embeddings and support efficient similarity search. FAISS (Facebook AI Similarity Search) provides exact and approximate nearest-neighbour (ANN) methods includi\n[doc_06 | score=0.465] Sentence Transformers (SBERT) fine-tune transformer models using siamese and triplet networks so that semantically similar sentences map to nearby points in embedding space.  [Note: Ollama unavailable \u2013 Failed to connect to Olla",
-  "total_latency_ms": 811.28,
+  "final_answer": "[summarizer] [retriever] [doc_05 | score=0.653] Vector databases store high-dimensional embeddings and support efficient similarity search. FAISS (Facebook AI Similarity Search) provides exact and approximate nearest-neighbour (ANN) methods includi\n[doc_04 | score=0.495] Retrieval-Augmented Generation (RAG) combines a retrieval component with a generative model.  [Ollama unavailable \u2013 Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/",
+  "total_latency_ms": 905.1,
   "tool_calls": [
     {
       "tool": "retriever",
       "input": "Summarize how FAISS enables efficient similarity search for dense retrieval.",
-      "output_snippet": "[doc_05 | score=0.659] Vector databases store high-dimensional embeddings and support efficient similarity search. FAISS (Facebook AI Similarity Search) provides exact and approximate nearest-neighbour (ANN) methods includi\n[doc_06 | score=0.465] Sentence Transformers (SBERT) fine-tune transformer m",
-      "latency_ms": 810.3,
+      "output_snippet": "[doc_05 | score=0.653] Vector databases store high-dimensional embeddings and support efficient similarity search. FAISS (Facebook AI Similarity Search) provides exact and approximate nearest-neighbour (ANN) methods includi\n[doc_04 | score=0.495] Retrieval-Augmented Generation (RAG) combines a retri",
+      "latency_ms": 904.07,
       "success": true
     },
     {
       "tool": "summarizer",
-      "input": "[retriever] [doc_05 | score=0.659] Vector databases store high-dimensional embeddings and support efficient similarity search. FAISS (Facebook AI Similarity Search) provides exact and approximate near",
-      "output_snippet": "[retriever] [doc_05 | score=0.659] Vector databases store high-dimensional embeddings and support efficient similarity search. FAISS (Facebook AI Similarity Search) provides exact and approximate nearest-neighbour (ANN) methods includi\n[doc_06 | score=0.465] Sentence Transformers (SBERT) fine-tune t",
+      "input": "[retriever] [doc_05 | score=0.653] Vector databases store high-dimensional embeddings and support efficient similarity search. FAISS (Facebook AI Similarity Search) provides exact and approximate near",
+      "output_snippet": "[retriever] [doc_05 | score=0.653] Vector databases store high-dimensional embeddings and support efficient similarity search. FAISS (Facebook AI Similarity Search) provides exact and approximate nearest-neighbour (ANN) methods includi\n[doc_04 | score=0.495] Retrieval-Augmented Generation (RAG) comb",
       "latency_ms": 0.65,
       "success": true
     }

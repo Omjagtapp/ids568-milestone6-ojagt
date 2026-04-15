@@ -1,0 +1,3 @@
+Title: BERT and Bidirectional Pre-training
+
+BERT (Bidirectional Encoder Representations from Transformers) was introduced by Devlin et al. in 2018. Unlike GPT-style models that predict the next token left-to-right, BERT is pre-trained with a Masked Language Model (MLM) objective, masking 15% of tokens and predicting them from context on both sides. A second objective, Next Sentence Prediction (NSP), teaches the model relationships between sentence pairs. Fine-tuning BERT achieves state-of-the-art results on many NLP benchmarks. BERT-Large has 340 million parameters while BERT-Base has 110 million parameters.

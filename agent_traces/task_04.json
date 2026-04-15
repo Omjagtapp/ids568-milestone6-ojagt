@@ -4,34 +4,34 @@
   "steps": [
     {
       "iteration": 1,
-      "thought": "I will use the retriever tool to gather more information.",
+      "thought": "I will call retriever to gather more information.",
       "action": "retriever",
       "action_input": "Extract key numeric facts about GPT-3 and DistilBERT model sizes.",
-      "observation": "[doc_03 | score=0.328] GPT (Generative Pre-trained Transformer) models generate text autoregressively: each token is conditioned on all preceding tokens. GPT-3 has 175 billion parameters and demonstrates impressive few-shot\n[doc_14 | score=0.268] Knowledge distillation trains a smaller student model to mimic the output distribution of a larger teacher model. The student minimises a combination of "
+      "observation": "[doc_03 | score=0.367] GPT models use a decoder-only transformer architecture without the cross-attention layers present in the original encoder-decoder design.\n[doc_03 | score=0.335] GPT (Generative Pre-trained Transformer) models generate text autoregressively: each token is conditioned on all preceding tokens. GPT-3 has 175 billion parameters and demonstrates impressive few-shot\n[doc_14 | score"
     },
     {
       "iteration": 2,
-      "thought": "I will extract key entities and facts from the gathered context.",
+      "thought": "I will extract key entities and numeric facts from the gathered context.",
       "action": "extractor",
-      "action_input": "[retriever] [doc_03 | score=0.328] GPT (Generative Pre-trained Transformer) models generate text autoregressively: each token is conditioned on all preceding tokens. GPT-3 has 175 billion parameters a",
-      "observation": "Key terms: GPT, FFN, PEFT, BA, LLM, RLHF, Generative Pre, Rank Adaptation, Reinforcement Learning, Human Feedback. Numeric values: 0.328, 3 , 175 billion, 0.268, 0.238, 2, 0.237, 0.173."
+      "action_input": "[retriever] [doc_03 | score=0.367] GPT models use a decoder-only transformer architecture without the cross-attention layers present in the original encoder-decoder design.\n[doc_03 | score=0.335] GPT ",
+      "observation": "Key terms: GPT, PEFT, BA, GPU, Generative Pre, Rank Adaptation. Numeric values: 0.367, 0.335, 3 , 175 billion, 0.278, 0.234, 0.222, 4, 65B."
     }
   ],
-  "final_answer": "[extractor] Key terms: GPT, FFN, PEFT, BA, LLM, RLHF, Generative Pre, Rank Adaptation, Reinforcement Learning, Human Feedback. Numeric values: 0.328, 3 , 175 billion, 0.268, 0.238, 2, 0.237, 0.173.",
-  "total_latency_ms": 803.59,
+  "final_answer": "[extractor] Key terms: GPT, PEFT, BA, GPU, Generative Pre, Rank Adaptation. Numeric values: 0.367, 0.335, 3 , 175 billion, 0.278, 0.234, 0.222, 4, 65B.",
+  "total_latency_ms": 890.56,
   "tool_calls": [
     {
       "tool": "retriever",
       "input": "Extract key numeric facts about GPT-3 and DistilBERT model sizes.",
-      "output_snippet": "[doc_03 | score=0.328] GPT (Generative Pre-trained Transformer) models generate text autoregressively: each token is conditioned on all preceding tokens. GPT-3 has 175 billion parameters and demonstrates impressive few-shot\n[doc_14 | score=0.268] Knowledge distillation trains a smaller student model",
-      "latency_ms": 802.75,
+      "output_snippet": "[doc_03 | score=0.367] GPT models use a decoder-only transformer architecture without the cross-attention layers present in the original encoder-decoder design.\n[doc_03 | score=0.335] GPT (Generative Pre-trained Transformer) models generate text autoregressively: each token is conditioned on all pre",
+      "latency_ms": 889.8,
       "success": true
     },
     {
       "tool": "extractor",
-      "input": "[retriever] [doc_03 | score=0.328] GPT (Generative Pre-trained Transformer) models generate text autoregressively: each token is conditioned on all preceding tokens. GPT-3 has 175 billion parameters a",
-      "output_snippet": "Key terms: GPT, FFN, PEFT, BA, LLM, RLHF, Generative Pre, Rank Adaptation, Reinforcement Learning, Human Feedback. Numeric values: 0.328, 3 , 175 billion, 0.268, 0.238, 2, 0.237, 0.173.",
-      "latency_ms": 0.3,
+      "input": "[retriever] [doc_03 | score=0.367] GPT models use a decoder-only transformer architecture without the cross-attention layers present in the original encoder-decoder design.\n[doc_03 | score=0.335] GPT ",
+      "output_snippet": "Key terms: GPT, PEFT, BA, GPU, Generative Pre, Rank Adaptation. Numeric values: 0.367, 0.335, 3 , 175 billion, 0.278, 0.234, 0.222, 4, 65B.",
+      "latency_ms": 0.28,
       "success": true
     }
   ],

@@ -1,0 +1,3 @@
+Title: Introduction to Transformers
+
+Transformers are a type of deep learning model introduced in the paper 'Attention Is All You Need' (Vaswani et al., 2017). They rely entirely on self-attention mechanisms, discarding recurrence and convolutions. The architecture consists of an encoder and decoder, each built from stacked multi-head attention layers and position-wise feed-forward networks. Positional encodings are added to token embeddings so the model can exploit sequence order. Transformers have become the dominant architecture in natural language processing and are increasingly applied in computer vision and audio processing.

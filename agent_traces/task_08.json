@@ -4,34 +4,34 @@
   "steps": [
     {
       "iteration": 1,
-      "thought": "I will use the retriever tool to gather more information.",
+      "thought": "I will call retriever to gather more information.",
       "action": "retriever",
       "action_input": "Retrieve and summarize how LoRA works for parameter-efficient fine-tuning.",
-      "observation": "[doc_15 | score=0.547] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight updates: W' = W + BA where B \u2208 R^(d\u00d7r\n[doc_08 | score=0.324] Common retrieval evaluation metrics include Precision@k (fraction of top-k retrieved documents that are relevant), Recall@k (fraction of relevant documen"
+      "observation": "[doc_15 | score=0.578] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight updates: W' = W + BA where B is in R^\n[doc_15 | score=0.532] QLoRA combines LoRA with 4-bit quantisation, enabling fine-tuning of 65B parameter models on a single 48GB GPU.\n[doc_11 | score=0.323] Instruction tuning"
     },
     {
       "iteration": 2,
-      "thought": "I have retrieved context. Now I will summarize it to form a concise answer.",
+      "thought": "I have context. Now I will summarize it into a concise answer.",
       "action": "summarizer",
-      "action_input": "[retriever] [doc_15 | score=0.547] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight up",
-      "observation": "[retriever] [doc_15 | score=0.547] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight updates: W' = W + BA where B \u2208 R^(d\u00d7r\n[doc_08 | score=0.324] Common retrieval evaluation metrics include Precision@k (fraction of top-k retrieved documents that are relevant), Recall@k (fraction of rele"
+      "action_input": "[retriever] [doc_15 | score=0.578] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight up",
+      "observation": "[retriever] [doc_15 | score=0.578] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight updates: W' = W + BA where B is in R^\n[doc_15 | score=0.532] QLoRA combines LoRA with 4-bit quantisation, enabling fine-tuning of 65B parameter models on a single 48GB GPU.  [Ollama unavailable \u2013 Failed"
     }
   ],
-  "final_answer": "[summarizer] [retriever] [doc_15 | score=0.547] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight updates: W' = W + BA where B \u2208 R^(d\u00d7r\n[doc_08 | score=0.324] Common retrieval evaluation metrics include Precision@k (fraction of top-k retrieved documents that are relevant), Recall@k (fraction of relevant documents retrieved in top-k), and Mean Reciprocal Ran\n[doc_11 | score=0.299] Inst",
-  "total_latency_ms": 896.21,
+  "final_answer": "[summarizer] [retriever] [doc_15 | score=0.578] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight updates: W' = W + BA where B is in R^\n[doc_15 | score=0.532] QLoRA combines LoRA with 4-bit quantisation, enabling fine-tuning of 65B parameter models on a single 48GB GPU.  [Ollama unavailable \u2013 Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. ",
+  "total_latency_ms": 931.03,
   "tool_calls": [
     {
       "tool": "retriever",
       "input": "Retrieve and summarize how LoRA works for parameter-efficient fine-tuning.",
-      "output_snippet": "[doc_15 | score=0.547] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight updates: W' = W + BA where B \u2208 R^(d\u00d7r\n[doc_08 | score=0.324] Common retrieval evaluation metrics include Precision",
-      "latency_ms": 894.48,
+      "output_snippet": "[doc_15 | score=0.578] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight updates: W' = W + BA where B is in R^\n[doc_15 | score=0.532] QLoRA combines LoRA with 4-bit quantisation, enabling",
+      "latency_ms": 929.93,
       "success": true
     },
     {
       "tool": "summarizer",
-      "input": "[retriever] [doc_15 | score=0.547] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight up",
-      "output_snippet": "[retriever] [doc_15 | score=0.547] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight updates: W' = W + BA where B \u2208 R^(d\u00d7r\n[doc_08 | score=0.324] Common retrieval evaluation metrics inclu",
-      "latency_ms": 1.17,
+      "input": "[retriever] [doc_15 | score=0.578] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight up",
+      "output_snippet": "[retriever] [doc_15 | score=0.578] PEFT methods fine-tune a small fraction of parameters while freezing the pre-trained backbone. LoRA (Low-Rank Adaptation) adds trainable rank-r matrices to weight updates: W' = W + BA where B is in R^\n[doc_15 | score=0.532] QLoRA combines LoRA with 4-bit quantisati",
+      "latency_ms": 0.66,
       "success": true
     }
   ],

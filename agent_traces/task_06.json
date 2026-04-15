@@ -4,33 +4,33 @@
   "steps": [
     {
       "iteration": 1,
-      "thought": "I will use the retriever tool to gather more information.",
+      "thought": "I will call retriever to gather more information.",
       "action": "retriever",
       "action_input": "Retrieve information about hallucination in LLMs and extract the types mentioned.",
-      "observation": "[doc_09 | score=0.492] Hallucination refers to LLM outputs that are factually incorrect or unsupported by the input context. Intrinsic hallucination contradicts the source, while extrinsic hallucination introduces new unver\n[doc_04 | score=0.329] Retrieval-Augmented Generation (RAG) combines a retrieval component with a generative model. Given a query, a retriever fetches relevant passages from an"
+      "observation": "[doc_09 | score=0.543] Hallucination is more common in low-resource languages and long-form generation tasks.\n[doc_09 | score=0.427] Hallucination refers to LLM outputs that are factually incorrect or unsupported by the input context. Intrinsic hallucination contradicts the source, while extrinsic hallucination introduces new unver\n[doc_04 | score=0.311] Retrieval-Augmented Generation (RAG) combin"
     },
     {
       "iteration": 2,
-      "thought": "I will extract key entities and facts from the gathered context.",
+      "thought": "I will extract key entities and numeric facts from the gathered context.",
       "action": "extractor",
-      "action_input": "[retriever] [doc_09 | score=0.492] Hallucination refers to LLM outputs that are factually incorrect or unsupported by the input context. Intrinsic hallucination contradicts the source, while extrinsic",
-      "observation": "Key terms: LLM, RAG, RLHF, GPT, Augmented Generation, Reinforcement Learning, Human Feedback, Generative Pre. Numeric values: 0.492, 0.329, 0.175, 0.169, 0.158, 3 , 175 billion."
+      "action_input": "[retriever] [doc_09 | score=0.543] Hallucination is more common in low-resource languages and long-form generation tasks.\n[doc_09 | score=0.427] Hallucination refers to LLM outputs that are factually ",
+      "observation": "Key terms: LLM, RAG, Augmented Generation. Numeric values: 0.543, 0.427, 0.311, 0.248, 0.172."
     }
   ],
-  "final_answer": "[extractor] Key terms: LLM, RAG, RLHF, GPT, Augmented Generation, Reinforcement Learning, Human Feedback, Generative Pre. Numeric values: 0.492, 0.329, 0.175, 0.169, 0.158, 3 , 175 billion.",
-  "total_latency_ms": 827.19,
+  "final_answer": "[extractor] Key terms: LLM, RAG, Augmented Generation. Numeric values: 0.543, 0.427, 0.311, 0.248, 0.172.",
+  "total_latency_ms": 971.64,
   "tool_calls": [
     {
       "tool": "retriever",
       "input": "Retrieve information about hallucination in LLMs and extract the types mentioned.",
-      "output_snippet": "[doc_09 | score=0.492] Hallucination refers to LLM outputs that are factually incorrect or unsupported by the input context. Intrinsic hallucination contradicts the source, while extrinsic hallucination introduces new unver\n[doc_04 | score=0.329] Retrieval-Augmented Generation (RAG) combines a retri",
-      "latency_ms": 826.57,
+      "output_snippet": "[doc_09 | score=0.543] Hallucination is more common in low-resource languages and long-form generation tasks.\n[doc_09 | score=0.427] Hallucination refers to LLM outputs that are factually incorrect or unsupported by the input context. Intrinsic hallucination contradicts the source, while extrinsic h",
+      "latency_ms": 971.09,
       "success": true
     },
     {
       "tool": "extractor",
-      "input": "[retriever] [doc_09 | score=0.492] Hallucination refers to LLM outputs that are factually incorrect or unsupported by the input context. Intrinsic hallucination contradicts the source, while extrinsic",
-      "output_snippet": "Key terms: LLM, RAG, RLHF, GPT, Augmented Generation, Reinforcement Learning, Human Feedback, Generative Pre. Numeric values: 0.492, 0.329, 0.175, 0.169, 0.158, 3 , 175 billion.",
+      "input": "[retriever] [doc_09 | score=0.543] Hallucination is more common in low-resource languages and long-form generation tasks.\n[doc_09 | score=0.427] Hallucination refers to LLM outputs that are factually ",
+      "output_snippet": "Key terms: LLM, RAG, Augmented Generation. Numeric values: 0.543, 0.427, 0.311, 0.248, 0.172.",
       "latency_ms": 0.06,
       "success": true
     }

@@ -1,31 +1,37 @@
 """
 Multi-Tool Agent Controller with ReAct-style reasoning traces.
 
-Tools available:
-  1. retriever  – RAG pipeline lookup (FAISS + sentence-transformers)
-  2. summarizer – Distil a set of retrieved passages into a short summary
-  3. extractor  – Pull specific facts / named entities from context
+Tasks are loaded from config/agent_tasks.json.
+The retriever tool reuses the RAG pipeline backed by docs/*.txt.
 
-Tool selection is driven by a lightweight LLM-based router (Ollama); falls back
-to keyword heuristics when Ollama is unavailable.
+Usage:
+    python3 agent_controller.py
+    python3 agent_controller.py --tasks config/agent_tasks.json
+    python3 agent_controller.py --docs_dir my_docs/ --llm_model llama3:8b-instruct
+    python3 agent_controller.py --llm_routing          # use Ollama for tool selection
+    python3 agent_controller.py --traces_dir out/
 """
 
+import argparse
 import json
+import os
 import re
 import time
-import os
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from rag_pipeline import (
-    DOCUMENTS,
-    EVALUATION_QUERIES,
     RAGPipeline,
     Chunk,
+    load_documents,
+    embed_query,
+    retrieve,
 )
 
+
 # ---------------------------------------------------------------------------
-# Agent state and trace data structures
+# Data structures
 # ---------------------------------------------------------------------------
 
 @dataclass
@@ -41,7 +47,7 @@ class ToolExecution:
 class AgentTrace:
     task_id: str
     task: str
-    steps: List[Dict] = field(default_factory=list)  # each step: thought, action, observation
+    steps: List[Dict] = field(default_factory=list)
     final_answer: str = ""
     total_latency_ms: float = 0.0
     tool_calls: List[ToolExecution] = field(default_factory=list)
@@ -74,85 +80,69 @@ class AgentTrace:
 class AgentState:
     task_id: str
     task: str
-    context: List[str] = field(default_factory=list)   # accumulates observations
+    context: List[str] = field(default_factory=list)
     iteration: int = 0
     max_iterations: int = 5
     done: bool = False
 
 
 # ---------------------------------------------------------------------------
-# Tool registry
+# Shared RAG pipeline (built once per process)
 # ---------------------------------------------------------------------------
 
-# Shared pipeline instance (built once, reused across tasks)
 _pipeline: Optional[RAGPipeline] = None
 
-def _get_pipeline() -> RAGPipeline:
+
+def _get_pipeline(docs_dir: str, model_name: str) -> RAGPipeline:
     global _pipeline
     if _pipeline is None:
-        _pipeline = RAGPipeline(strategy="recursive", chunk_size=512, k=5)
-        _pipeline.ingest(DOCUMENTS)
+        docs = load_documents(docs_dir)
+        _pipeline = RAGPipeline(strategy="recursive", chunk_size=512, model_name=model_name)
+        _pipeline.ingest(docs)
     return _pipeline
 
 
-def tool_retriever(query: str) -> Tuple[str, float]:
-    """Retrieve relevant passages for a query using the RAG pipeline."""
+# ---------------------------------------------------------------------------
+# Tool implementations
+# ---------------------------------------------------------------------------
+
+def tool_retriever(query: str, docs_dir: str, model_name: str) -> Tuple[str, float]:
     t0 = time.perf_counter()
-    pipe = _get_pipeline()
-    q_emb, _ = __import__("rag_pipeline").embed_query(query)
-    retrieved, scores, _ = __import__("rag_pipeline").retrieve(q_emb, pipe.index, pipe.chunks, k=5)
+    pipe = _get_pipeline(docs_dir, model_name)
+    q_emb, _ = embed_query(query, model_name)
+    hits, scores, _ = retrieve(q_emb, pipe.index, pipe.chunks, k=5)
     passages = [
         f"[{c.doc_id} | score={s:.3f}] {c.text[:200]}"
-        for c, s in zip(retrieved, scores)
+        for c, s in zip(hits, scores)
     ]
-    output = "\n".join(passages)
-    latency_ms = (time.perf_counter() - t0) * 1000
-    return output, latency_ms
+    return "\n".join(passages), (time.perf_counter() - t0) * 1000
 
 
-def tool_summarizer(text: str, llm_model: str = "mistral:7b-instruct") -> Tuple[str, float]:
-    """Summarize the given text in 2-3 sentences."""
-    prompt = (
-        f"Summarize the following text in 2-3 concise sentences:\n\n{text[:1500]}\n\nSummary:"
-    )
+def tool_summarizer(text: str, llm_model: str) -> Tuple[str, float]:
+    prompt = f"Summarize the following text in 2-3 concise sentences:\n\n{text[:1500]}\n\nSummary:"
     t0 = time.perf_counter()
     try:
         import ollama
-        resp = ollama.chat(
-            model=llm_model,
-            messages=[{"role": "user", "content": prompt}],
-        )
+        resp = ollama.chat(model=llm_model, messages=[{"role": "user", "content": prompt}])
         summary = resp["message"]["content"].strip()
     except Exception as exc:
-        # Fallback: first two sentences of the text
         sentences = re.split(r'(?<=[.!?])\s+', text.strip())
-        summary = " ".join(sentences[:2])
-        summary += f"  [Note: Ollama unavailable – {exc}]"
-    latency_ms = (time.perf_counter() - t0) * 1000
-    return summary, latency_ms
+        summary = " ".join(sentences[:2]) + f"  [Ollama unavailable – {exc}]"
+    return summary, (time.perf_counter() - t0) * 1000
 
 
-def tool_extractor(text: str, entity_type: str = "concepts") -> Tuple[str, float]:
-    """Extract named entities or key concepts from text using regex heuristics."""
+def tool_extractor(text: str) -> Tuple[str, float]:
     t0 = time.perf_counter()
-    # Capitalised phrases (potential proper nouns / model names)
     acronyms = re.findall(r'\b[A-Z]{2,}\b', text)
     capitalised = re.findall(r'\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+\b', text)
     numbers = re.findall(r'\b\d+(?:\.\d+)?\s*(?:billion|million|%|B|M|k)?\b', text)
-    unique_terms = list(dict.fromkeys(acronyms + capitalised))[:15]
+    terms = list(dict.fromkeys(acronyms + capitalised))[:15]
     output = (
-        f"Key terms: {', '.join(unique_terms) if unique_terms else 'none found'}. "
-        f"Numeric values: {', '.join(numbers[:10]) if numbers else 'none found'}."
+        f"Key terms: {', '.join(terms) if terms else 'none'}. "
+        f"Numeric values: {', '.join(numbers[:10]) if numbers else 'none'}."
     )
-    latency_ms = (time.perf_counter() - t0) * 1000
-    return output, latency_ms
+    return output, (time.perf_counter() - t0) * 1000
 
-
-TOOL_REGISTRY = {
-    "retriever": tool_retriever,
-    "summarizer": tool_summarizer,
-    "extractor": tool_extractor,
-}
 
 TOOL_DESCRIPTIONS = {
     "retriever": "Search the knowledge base for passages relevant to a query.",
@@ -160,12 +150,12 @@ TOOL_DESCRIPTIONS = {
     "extractor": "Extract key named entities and numeric facts from text.",
 }
 
-
 # ---------------------------------------------------------------------------
-# Tool selection: LLM-based with heuristic fallback
+# Tool selection
 # ---------------------------------------------------------------------------
 
-SELECTION_PROMPT_TEMPLATE = """You are an AI assistant that selects the best tool.
+_SELECTION_PROMPT = """\
+You are an AI assistant that selects the best tool.
 
 Available tools:
 {tool_list}
@@ -174,76 +164,67 @@ Task: {task}
 Conversation so far:
 {context}
 
-Which tool should be called next? Reply with EXACTLY one of: retriever, summarizer, extractor, FINISH.
+Which tool should be called next? Reply with EXACTLY one word: retriever, summarizer, extractor, or FINISH.
 If the task is answered, reply FINISH."""
 
 
-def select_tool_llm(
-    task: str,
-    context: List[str],
-    llm_model: str = "mistral:7b-instruct",
-) -> str:
-    tool_list = "\n".join(f"  {k}: {v}" for k, v in TOOL_DESCRIPTIONS.items())
-    prompt = SELECTION_PROMPT_TEMPLATE.format(
-        tool_list=tool_list,
+def select_tool_llm(task: str, context: List[str], llm_model: str) -> str:
+    prompt = _SELECTION_PROMPT.format(
+        tool_list="\n".join(f"  {k}: {v}" for k, v in TOOL_DESCRIPTIONS.items()),
         task=task,
         context="\n".join(context[-4:]) if context else "(none)",
     )
     try:
         import ollama
-        resp = ollama.chat(
-            model=llm_model,
-            messages=[{"role": "user", "content": prompt}],
-        )
+        resp = ollama.chat(model=llm_model, messages=[{"role": "user", "content": prompt}])
         raw = resp["message"]["content"].strip().lower()
-        for tool in list(TOOL_REGISTRY.keys()) + ["finish"]:
+        for tool in ["retriever", "summarizer", "extractor", "finish"]:
             if tool in raw:
-                return tool
+                return tool if tool != "finish" else "FINISH"
         return "retriever"
     except Exception:
         return _select_tool_heuristic(task, context)
 
 
 def _select_tool_heuristic(task: str, context: List[str]) -> str:
-    """Keyword-based fallback tool selector."""
-    task_lower = task.lower()
+    tl = task.lower()
     if not context:
         return "retriever"
-    last_obs = context[-1].lower() if context else ""
-    if any(w in task_lower for w in ["summarize", "summary", "briefly", "overview"]):
+    if any(w in tl for w in ["summarize", "summary", "briefly", "overview"]):
         return "summarizer"
-    if any(w in task_lower for w in ["extract", "entities", "names", "numbers", "facts"]):
+    if any(w in tl for w in ["extract", "entities", "names", "numbers", "facts"]):
         return "extractor"
-    if any(w in task_lower for w in ["compare", "difference", "versus", "vs"]):
-        if "retriever" in last_obs or len(context) < 2:
-            return "retriever"
-        return "summarizer"
+    if any(w in tl for w in ["compare", "difference", "versus", "vs"]):
+        return "summarizer" if len(context) >= 2 else "retriever"
     if len(context) >= 2:
         return "FINISH"
     return "retriever"
 
 
 # ---------------------------------------------------------------------------
-# ReAct-style agent loop
+# ReAct agent loop
 # ---------------------------------------------------------------------------
 
-def _build_thought(state: AgentState, selected_tool: str) -> str:
+def _thought(state: AgentState, tool: str) -> str:
     if state.iteration == 0:
-        return f"I need to answer: '{state.task}'. I'll start by retrieving relevant information."
-    if selected_tool == "summarizer":
-        return "I have retrieved context. Now I will summarize it to form a concise answer."
-    if selected_tool == "extractor":
-        return "I will extract key entities and facts from the gathered context."
-    if selected_tool == "FINISH":
-        return "I have enough information to provide a final answer."
-    return f"I will use the {selected_tool} tool to gather more information."
+        return f"I need to answer: '{state.task}'. I will start by retrieving relevant information."
+    if tool == "summarizer":
+        return "I have context. Now I will summarize it into a concise answer."
+    if tool == "extractor":
+        return "I will extract key entities and numeric facts from the gathered context."
+    if tool == "FINISH":
+        return "I have enough information to produce a final answer."
+    return f"I will call {tool} to gather more information."
 
 
 def run_agent_task(
     task_id: str,
     task: str,
-    llm_model: str = "mistral:7b-instruct",
-    use_llm_routing: bool = True,
+    docs_dir: str,
+    model_name: str,
+    llm_model: str,
+    use_llm_routing: bool,
+    traces_dir: str,
 ) -> AgentTrace:
     t_start = time.perf_counter()
     state = AgentState(task_id=task_id, task=task)
@@ -252,15 +233,14 @@ def run_agent_task(
     while not state.done and state.iteration < state.max_iterations:
         state.iteration += 1
 
-        # --- Tool selection ---
-        if use_llm_routing:
-            selected_tool = select_tool_llm(task, state.context, llm_model)
-        else:
-            selected_tool = _select_tool_heuristic(task, state.context)
+        selected = (
+            select_tool_llm(task, state.context, llm_model)
+            if use_llm_routing
+            else _select_tool_heuristic(task, state.context)
+        )
+        thought = _thought(state, selected)
 
-        thought = _build_thought(state, selected_tool)
-
-        if selected_tool == "FINISH":
+        if selected == "FINISH":
             state.done = True
             trace.steps.append({
                 "iteration": state.iteration,
@@ -270,169 +250,130 @@ def run_agent_task(
             })
             break
 
-        # --- Execute tool ---
-        tool_fn = TOOL_REGISTRY.get(selected_tool)
-        if tool_fn is None:
-            state.done = True
-            trace.success = False
-            trace.failure_reason = f"Unknown tool selected: {selected_tool}"
-            break
-
         try:
-            # Determine tool input
-            if selected_tool == "retriever":
+            if selected == "retriever":
                 tool_input = task
-                output, lat = tool_fn(tool_input)
-            elif selected_tool == "summarizer":
+                output, lat = tool_retriever(tool_input, docs_dir, model_name)
+            elif selected == "summarizer":
                 tool_input = "\n".join(state.context)
-                output, lat = tool_fn(tool_input, llm_model)
-            elif selected_tool == "extractor":
+                output, lat = tool_summarizer(tool_input, llm_model)
+            elif selected == "extractor":
                 tool_input = "\n".join(state.context)
-                output, lat = tool_fn(tool_input)
+                output, lat = tool_extractor(tool_input)
             else:
-                tool_input = task
-                output, lat = tool_fn(tool_input)
-
+                raise ValueError(f"Unknown tool: {selected}")
             success = True
         except Exception as exc:
-            output = f"Tool error: {exc}"
-            lat = 0.0
-            success = False
+            output, lat, success = f"Tool error: {exc}", 0.0, False
 
-        exec_record = ToolExecution(
-            tool_name=selected_tool,
+        trace.tool_calls.append(ToolExecution(
+            tool_name=selected,
             tool_input=tool_input[:200],
             tool_output=output,
             latency_ms=lat,
             success=success,
-        )
-        trace.tool_calls.append(exec_record)
-        state.context.append(f"[{selected_tool}] {output}")
-
+        ))
+        state.context.append(f"[{selected}] {output}")
         trace.steps.append({
             "iteration": state.iteration,
             "thought": thought,
-            "action": selected_tool,
+            "action": selected,
             "action_input": tool_input[:200],
             "observation": output[:400],
         })
 
-        # Decide if we have enough after retrieval + one more step
-        if state.iteration >= 2 and selected_tool in ("summarizer", "extractor"):
+        # Stop after a synthesizer tool
+        if state.iteration >= 2 and selected in ("summarizer", "extractor"):
             state.done = True
 
-    # --- Final answer synthesis ---
-    if state.context:
-        context_text = "\n".join(state.context)
-        final_prompt = (
-            f"Based on the following context, give a final concise answer to: '{task}'\n\n"
-            f"Context:\n{context_text[:2000]}\n\nFinal Answer:"
-        )
-        try:
-            import ollama
-            resp = ollama.chat(
-                model=llm_model,
-                messages=[{"role": "user", "content": final_prompt}],
-            )
-            trace.final_answer = resp["message"]["content"].strip()
-        except Exception:
-            # Fallback: extract first meaningful observation
-            trace.final_answer = state.context[-1][:500] if state.context else "No answer generated."
-    else:
-        trace.final_answer = "No context gathered."
+    # Final answer
+    ctx = "\n".join(state.context)
+    final_prompt = (
+        f"Based on the following context, give a concise final answer to: '{task}'\n\n"
+        f"Context:\n{ctx[:2000]}\n\nFinal Answer:"
+    )
+    try:
+        import ollama
+        resp = ollama.chat(model=llm_model, messages=[{"role": "user", "content": final_prompt}])
+        trace.final_answer = resp["message"]["content"].strip()
+    except Exception:
+        trace.final_answer = state.context[-1][:500] if state.context else "No answer generated."
 
     trace.total_latency_ms = (time.perf_counter() - t_start) * 1000
+
+    # Write trace to file
+    out_path = Path(traces_dir) / f"{task_id}.json"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(trace.to_dict(), indent=2), encoding="utf-8")
+
     return trace
 
 
 # ---------------------------------------------------------------------------
-# 10 evaluation tasks
+# Load tasks from file
 # ---------------------------------------------------------------------------
 
-AGENT_TASKS = [
-    {
-        "id": "task_01",
-        "task": "Retrieve and summarize the key ideas behind Retrieval-Augmented Generation.",
-    },
-    {
-        "id": "task_02",
-        "task": "Find information about BERT and GPT, then compare their pre-training objectives.",
-    },
-    {
-        "id": "task_03",
-        "task": "Explain what chunking strategies are used in RAG pipelines and why overlap matters.",
-    },
-    {
-        "id": "task_04",
-        "task": "Extract key numeric facts about GPT-3 and DistilBERT model sizes.",
-    },
-    {
-        "id": "task_05",
-        "task": "Summarize how FAISS enables efficient similarity search for dense retrieval.",
-    },
-    {
-        "id": "task_06",
-        "task": "Retrieve information about hallucination in LLMs and extract the types mentioned.",
-    },
-    {
-        "id": "task_07",
-        "task": "What is the ReAct prompting pattern and how does it differ from chain-of-thought?",
-    },
-    {
-        "id": "task_08",
-        "task": "Retrieve and summarize how LoRA works for parameter-efficient fine-tuning.",
-    },
-    {
-        "id": "task_09",
-        "task": "Tell me about the weather forecast for tomorrow.",  # out-of-scope / edge case
-    },
-    {
-        "id": "task_10",
-        "task": "Find information about Mixture of Experts and extract the model names mentioned.",
-    },
-]
+def load_tasks(tasks_path: str) -> List[Dict]:
+    path = Path(tasks_path)
+    if not path.exists():
+        raise FileNotFoundError(f"tasks file not found: {path.resolve()}")
+    data = json.loads(path.read_text(encoding="utf-8"))
+    tasks = data.get("tasks", [])
+    print(f"Loaded {len(tasks)} agent tasks from {path.resolve()}")
+    return tasks
 
 
 # ---------------------------------------------------------------------------
-# CLI entry point
+# CLI
 # ---------------------------------------------------------------------------
 
-def run_all_tasks(save_traces: bool = True) -> List[AgentTrace]:
-    os.makedirs("agent_traces", exist_ok=True)
-    print("\n=== Agent Evaluation – 10 Tasks ===")
-    print("Building RAG index (one-time)…")
-    _get_pipeline()
+def parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser(description="Multi-Tool Agent Evaluation")
+    p.add_argument("--docs_dir", default="docs", help="Directory of .txt documents")
+    p.add_argument("--tasks", default="config/agent_tasks.json", help="Path to tasks JSON")
+    p.add_argument("--llm_model", default="mistral:7b-instruct")
+    p.add_argument("--model_name", default="all-MiniLM-L6-v2", help="Embedding model")
+    p.add_argument("--traces_dir", default="agent_traces", help="Directory to write trace files")
+    p.add_argument(
+        "--llm_routing", action="store_true",
+        help="Use Ollama LLM for tool selection (default: heuristic)",
+    )
+    return p.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+
+    tasks = load_tasks(args.tasks)
+
+    print("\n=== Agent Evaluation ===")
+    print(f"Building RAG index from {args.docs_dir}…")
+    _get_pipeline(args.docs_dir, args.model_name)
     print("Index ready.\n")
 
     traces: List[AgentTrace] = []
-    for task_info in AGENT_TASKS:
+    for task_info in tasks:
         print(f"[{task_info['id']}] {task_info['task'][:70]}…")
         trace = run_agent_task(
             task_id=task_info["id"],
             task=task_info["task"],
-            use_llm_routing=False,   # use heuristic by default; flip to True with Ollama
+            docs_dir=args.docs_dir,
+            model_name=args.model_name,
+            llm_model=args.llm_model,
+            use_llm_routing=args.llm_routing,
+            traces_dir=args.traces_dir,
         )
         traces.append(trace)
-
-        # Save individual trace JSON
-        if save_traces:
-            path = f"agent_traces/{task_info['id']}.json"
-            with open(path, "w") as f:
-                json.dump(trace.to_dict(), f, indent=2)
-
         tool_names = [tc.tool_name for tc in trace.tool_calls]
         print(
-            f"  Tools used: {tool_names} | "
-            f"Steps: {len(trace.steps)} | "
-            f"Latency: {trace.total_latency_ms:.0f}ms | "
-            f"Success: {trace.success}"
+            f"  Tools: {tool_names} | Steps: {len(trace.steps)} | "
+            f"Latency: {trace.total_latency_ms:.0f}ms | Success: {trace.success}"
         )
         if not trace.success:
             print(f"  Failure: {trace.failure_reason}")
 
-    print(f"\nAll {len(traces)} traces saved to agent_traces/")
-    return traces
+    print(f"\nAll {len(traces)} traces written to {args.traces_dir}/")
 
 
 if __name__ == "__main__":
-    run_all_tasks(save_traces=True)
+    main()

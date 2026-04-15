@@ -1,0 +1,3 @@
+Title: Attention Mechanisms
+
+Scaled dot-product attention computes compatibility between queries Q and keys K, scaled by the square root of d_k, then applies a softmax and multiplies by values V: Attention(Q,K,V) = softmax(QK^T / sqrt(d_k)) V. Multi-head attention runs h attention heads in parallel on different linear projections and concatenates results. Self-attention allows each token to attend to all other tokens in the sequence. Cross-attention connects the decoder to encoder outputs in sequence-to-sequence models. Causal (masked) self-attention restricts each token to attend only to previous positions for autoregressive generation.

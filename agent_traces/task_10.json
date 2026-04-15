@@ -4,34 +4,34 @@
   "steps": [
     {
       "iteration": 1,
-      "thought": "I will use the retriever tool to gather more information.",
+      "thought": "I will call retriever to gather more information.",
       "action": "retriever",
       "action_input": "Find information about Mixture of Experts and extract the model names mentioned.",
-      "observation": "[doc_12 | score=0.356] Mixture of Experts (MoE) scales model capacity without proportionally increasing compute. A gating network routes each token to a subset of expert FFN layers (typically top-2). Only the selected exper\n[doc_14 | score=0.296] Knowledge distillation trains a smaller student model to mimic the output distribution of a larger teacher model. The student minimises a combination of "
+      "observation": "[doc_12 | score=0.305] Mixture of Experts (MoE) scales model capacity without proportionally increasing compute. A gating network routes each token to a subset of expert FFN layers (typically top-2 out of 8). Only the selec\n[doc_14 | score=0.298] Knowledge distillation trains a smaller student model to mimic the output distribution of a larger teacher model. The student minimises a combination of "
     },
     {
       "iteration": 2,
-      "thought": "I will extract key entities and facts from the gathered context.",
+      "thought": "I will extract key entities and numeric facts from the gathered context.",
       "action": "extractor",
-      "action_input": "[retriever] [doc_12 | score=0.356] Mixture of Experts (MoE) scales model capacity without proportionally increasing compute. A gating network routes each token to a subset of expert FFN layers (typica",
-      "observation": "Key terms: FFN, GPT, PEFT, BA, RAG, Generative Pre, Rank Adaptation, Augmented Generation. Numeric values: 0.356, 2, 0.296, 0.226, 3 , 175 billion, 0.214, 0.213."
+      "action_input": "[retriever] [doc_12 | score=0.305] Mixture of Experts (MoE) scales model capacity without proportionally increasing compute. A gating network routes each token to a subset of expert FFN layers (typica",
+      "observation": "Key terms: FFN, Attention Is All You Need. Numeric values: 0.305, 2 , 8, 0.298, 0.226, 0.218, 2017, 0.214."
     }
   ],
-  "final_answer": "[extractor] Key terms: FFN, GPT, PEFT, BA, RAG, Generative Pre, Rank Adaptation, Augmented Generation. Numeric values: 0.356, 2, 0.296, 0.226, 3 , 175 billion, 0.214, 0.213.",
-  "total_latency_ms": 945.37,
+  "final_answer": "[extractor] Key terms: FFN, Attention Is All You Need. Numeric values: 0.305, 2 , 8, 0.298, 0.226, 0.218, 2017, 0.214.",
+  "total_latency_ms": 952.77,
   "tool_calls": [
     {
       "tool": "retriever",
       "input": "Find information about Mixture of Experts and extract the model names mentioned.",
-      "output_snippet": "[doc_12 | score=0.356] Mixture of Experts (MoE) scales model capacity without proportionally increasing compute. A gating network routes each token to a subset of expert FFN layers (typically top-2). Only the selected exper\n[doc_14 | score=0.296] Knowledge distillation trains a smaller student model",
-      "latency_ms": 944.44,
+      "output_snippet": "[doc_12 | score=0.305] Mixture of Experts (MoE) scales model capacity without proportionally increasing compute. A gating network routes each token to a subset of expert FFN layers (typically top-2 out of 8). Only the selec\n[doc_14 | score=0.298] Knowledge distillation trains a smaller student model",
+      "latency_ms": 952.23,
       "success": true
     },
     {
       "tool": "extractor",
-      "input": "[retriever] [doc_12 | score=0.356] Mixture of Experts (MoE) scales model capacity without proportionally increasing compute. A gating network routes each token to a subset of expert FFN layers (typica",
-      "output_snippet": "Key terms: FFN, GPT, PEFT, BA, RAG, Generative Pre, Rank Adaptation, Augmented Generation. Numeric values: 0.356, 2, 0.296, 0.226, 3 , 175 billion, 0.214, 0.213.",
-      "latency_ms": 0.08,
+      "input": "[retriever] [doc_12 | score=0.305] Mixture of Experts (MoE) scales model capacity without proportionally increasing compute. A gating network routes each token to a subset of expert FFN layers (typica",
+      "output_snippet": "Key terms: FFN, Attention Is All You Need. Numeric values: 0.305, 2 , 8, 0.298, 0.226, 0.218, 2017, 0.214.",
+      "latency_ms": 0.06,
       "success": true
     }
   ],

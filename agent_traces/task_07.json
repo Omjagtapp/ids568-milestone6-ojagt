@@ -4,40 +4,40 @@
   "steps": [
     {
       "iteration": 1,
-      "thought": "I will use the retriever tool to gather more information.",
+      "thought": "I will call retriever to gather more information.",
       "action": "retriever",
       "action_input": "What is the ReAct prompting pattern and how does it differ from chain-of-thought?",
-      "observation": "[doc_13 | score=0.683] Prompt engineering designs inputs to elicit desired LLM behaviour without parameter updates. Few-shot prompting includes examples in the context. Chain-of-thought (CoT) prompting instructs the model t\n[doc_11 | score=0.291] Instruction tuning fine-tunes a pre-trained LLM on (instruction, response) pairs so the model follows natural-language directions. InstructGPT applies Re"
+      "observation": "[doc_13 | score=0.667] Prompt engineering designs inputs to elicit desired LLM behaviour without parameter updates. Few-shot prompting includes examples in the context. Chain-of-thought (CoT) prompting instructs the model t\n[doc_13 | score=0.349] Self-consistency prompting samples multiple reasoning chains and takes the majority answer. Prompt templates and system instructions shape model behaviou"
     },
     {
       "iteration": 2,
-      "thought": "I will use the retriever tool to gather more information.",
+      "thought": "I will call retriever to gather more information.",
       "action": "retriever",
       "action_input": "What is the ReAct prompting pattern and how does it differ from chain-of-thought?",
-      "observation": "[doc_13 | score=0.683] Prompt engineering designs inputs to elicit desired LLM behaviour without parameter updates. Few-shot prompting includes examples in the context. Chain-of-thought (CoT) prompting instructs the model t\n[doc_11 | score=0.291] Instruction tuning fine-tunes a pre-trained LLM on (instruction, response) pairs so the model follows natural-language directions. InstructGPT applies Re"
+      "observation": "[doc_13 | score=0.667] Prompt engineering designs inputs to elicit desired LLM behaviour without parameter updates. Few-shot prompting includes examples in the context. Chain-of-thought (CoT) prompting instructs the model t\n[doc_13 | score=0.349] Self-consistency prompting samples multiple reasoning chains and takes the majority answer. Prompt templates and system instructions shape model behaviou"
     },
     {
       "iteration": 3,
-      "thought": "I have enough information to provide a final answer.",
+      "thought": "I have enough information to produce a final answer.",
       "action": "FINISH",
       "observation": "Task complete."
     }
   ],
-  "final_answer": "[retriever] [doc_13 | score=0.683] Prompt engineering designs inputs to elicit desired LLM behaviour without parameter updates. Few-shot prompting includes examples in the context. Chain-of-thought (CoT) prompting instructs the model t\n[doc_11 | score=0.291] Instruction tuning fine-tunes a pre-trained LLM on (instruction, response) pairs so the model follows natural-language directions. InstructGPT applies Reinforcement Learning from Human Feedback (RLHF)\n[doc_09 | score=0.254] Hallucination ref",
-  "total_latency_ms": 1702.6,
+  "final_answer": "[retriever] [doc_13 | score=0.667] Prompt engineering designs inputs to elicit desired LLM behaviour without parameter updates. Few-shot prompting includes examples in the context. Chain-of-thought (CoT) prompting instructs the model t\n[doc_13 | score=0.349] Self-consistency prompting samples multiple reasoning chains and takes the majority answer. Prompt templates and system instructions shape model behaviour in production deployments.\n[doc_09 | score=0.314] Hallucination refers to LLM outputs ",
+  "total_latency_ms": 1750.36,
   "tool_calls": [
     {
       "tool": "retriever",
       "input": "What is the ReAct prompting pattern and how does it differ from chain-of-thought?",
-      "output_snippet": "[doc_13 | score=0.683] Prompt engineering designs inputs to elicit desired LLM behaviour without parameter updates. Few-shot prompting includes examples in the context. Chain-of-thought (CoT) prompting instructs the model t\n[doc_11 | score=0.291] Instruction tuning fine-tunes a pre-trained LLM on (i",
-      "latency_ms": 843.52,
+      "output_snippet": "[doc_13 | score=0.667] Prompt engineering designs inputs to elicit desired LLM behaviour without parameter updates. Few-shot prompting includes examples in the context. Chain-of-thought (CoT) prompting instructs the model t\n[doc_13 | score=0.349] Self-consistency prompting samples multiple reasoning",
+      "latency_ms": 835.69,
       "success": true
     },
     {
       "tool": "retriever",
       "input": "What is the ReAct prompting pattern and how does it differ from chain-of-thought?",
-      "output_snippet": "[doc_13 | score=0.683] Prompt engineering designs inputs to elicit desired LLM behaviour without parameter updates. Few-shot prompting includes examples in the context. Chain-of-thought (CoT) prompting instructs the model t\n[doc_11 | score=0.291] Instruction tuning fine-tunes a pre-trained LLM on (i",
-      "latency_ms": 858.17,
+      "output_snippet": "[doc_13 | score=0.667] Prompt engineering designs inputs to elicit desired LLM behaviour without parameter updates. Few-shot prompting includes examples in the context. Chain-of-thought (CoT) prompting instructs the model t\n[doc_13 | score=0.349] Self-consistency prompting samples multiple reasoning",
+      "latency_ms": 913.88,
       "success": true
     }
   ],

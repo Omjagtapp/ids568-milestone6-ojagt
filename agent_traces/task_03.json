@@ -4,40 +4,40 @@
   "steps": [
     {
       "iteration": 1,
-      "thought": "I will use the retriever tool to gather more information.",
+      "thought": "I will call retriever to gather more information.",
       "action": "retriever",
       "action_input": "Explain what chunking strategies are used in RAG pipelines and why overlap matters.",
-      "observation": "[doc_07 | score=0.468] Document chunking splits long texts into smaller passages that fit within the context window of the retriever and generator. Fixed-size chunking splits by a fixed token or character count with optiona\n[doc_04 | score=0.301] Retrieval-Augmented Generation (RAG) combines a retrieval component with a generative model. Given a query, a retriever fetches relevant passages from an"
+      "observation": "[doc_07 | score=0.533] Chunk size (256 to 1024 tokens) and overlap (10 to 20 percent) are key hyperparameters that affect both retrieval precision and context coherence. Smaller chunks improve precision but may lose context\n[doc_07 | score=0.484] Document chunking splits long texts into smaller passages that fit within the context window of the retriever and generator. Fixed-size chunking splits b"
     },
     {
       "iteration": 2,
-      "thought": "I will use the retriever tool to gather more information.",
+      "thought": "I will call retriever to gather more information.",
       "action": "retriever",
       "action_input": "Explain what chunking strategies are used in RAG pipelines and why overlap matters.",
-      "observation": "[doc_07 | score=0.468] Document chunking splits long texts into smaller passages that fit within the context window of the retriever and generator. Fixed-size chunking splits by a fixed token or character count with optiona\n[doc_04 | score=0.301] Retrieval-Augmented Generation (RAG) combines a retrieval component with a generative model. Given a query, a retriever fetches relevant passages from an"
+      "observation": "[doc_07 | score=0.533] Chunk size (256 to 1024 tokens) and overlap (10 to 20 percent) are key hyperparameters that affect both retrieval precision and context coherence. Smaller chunks improve precision but may lose context\n[doc_07 | score=0.484] Document chunking splits long texts into smaller passages that fit within the context window of the retriever and generator. Fixed-size chunking splits b"
     },
     {
       "iteration": 3,
-      "thought": "I have enough information to provide a final answer.",
+      "thought": "I have enough information to produce a final answer.",
       "action": "FINISH",
       "observation": "Task complete."
     }
   ],
-  "final_answer": "[retriever] [doc_07 | score=0.468] Document chunking splits long texts into smaller passages that fit within the context window of the retriever and generator. Fixed-size chunking splits by a fixed token or character count with optiona\n[doc_04 | score=0.301] Retrieval-Augmented Generation (RAG) combines a retrieval component with a generative model. Given a query, a retriever fetches relevant passages from an external corpus; these passages are concatenat\n[doc_09 | score=0.243] Hallucination ref",
-  "total_latency_ms": 1765.96,
+  "final_answer": "[retriever] [doc_07 | score=0.533] Chunk size (256 to 1024 tokens) and overlap (10 to 20 percent) are key hyperparameters that affect both retrieval precision and context coherence. Smaller chunks improve precision but may lose context\n[doc_07 | score=0.484] Document chunking splits long texts into smaller passages that fit within the context window of the retriever and generator. Fixed-size chunking splits by a fixed token or character count with optiona\n[doc_04 | score=0.408] Modern RAG system",
+  "total_latency_ms": 1720.82,
   "tool_calls": [
     {
       "tool": "retriever",
       "input": "Explain what chunking strategies are used in RAG pipelines and why overlap matters.",
-      "output_snippet": "[doc_07 | score=0.468] Document chunking splits long texts into smaller passages that fit within the context window of the retriever and generator. Fixed-size chunking splits by a fixed token or character count with optiona\n[doc_04 | score=0.301] Retrieval-Augmented Generation (RAG) combines a retri",
-      "latency_ms": 850.97,
+      "output_snippet": "[doc_07 | score=0.533] Chunk size (256 to 1024 tokens) and overlap (10 to 20 percent) are key hyperparameters that affect both retrieval precision and context coherence. Smaller chunks improve precision but may lose context\n[doc_07 | score=0.484] Document chunking splits long texts into smaller pass",
+      "latency_ms": 868.14,
       "success": true
     },
     {
       "tool": "retriever",
       "input": "Explain what chunking strategies are used in RAG pipelines and why overlap matters.",
-      "output_snippet": "[doc_07 | score=0.468] Document chunking splits long texts into smaller passages that fit within the context window of the retriever and generator. Fixed-size chunking splits by a fixed token or character count with optiona\n[doc_04 | score=0.301] Retrieval-Augmented Generation (RAG) combines a retri",
-      "latency_ms": 914.32,
+      "output_snippet": "[doc_07 | score=0.533] Chunk size (256 to 1024 tokens) and overlap (10 to 20 percent) are key hyperparameters that affect both retrieval precision and context coherence. Smaller chunks improve precision but may lose context\n[doc_07 | score=0.484] Document chunking splits long texts into smaller pass",
+      "latency_ms": 851.73,
       "success": true
     }
   ],
