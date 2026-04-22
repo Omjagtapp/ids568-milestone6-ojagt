@@ -1,0 +1,40 @@
+{
+  "task_id": "task_03",
+  "task": "Explain what chunking strategies are used in RAG pipelines and why overlap matters.",
+  "steps": [
+    {
+      "iteration": 1,
+      "thought": "I will call retriever to gather more information.",
+      "action": "retriever",
+      "action_input": "Explain what chunking strategies are used in RAG pipelines and why overlap matters.",
+      "observation": "[doc_07 | score=0.533] Chunk size (256 to 1024 tokens) and overlap (10 to 20 percent) are key hyperparameters that affect both retrieval precision and context coherence. Smaller chunks improve precision but may lose context\n[doc_07 | score=0.484] Document chunking splits long texts into smaller passages that fit within the context window of the retriever and generator. Fixed-size chunking splits b"
+    },
+    {
+      "iteration": 2,
+      "thought": "I have context. Now I will summarize it into a concise answer.",
+      "action": "summarizer",
+      "action_input": "[retriever] [doc_07 | score=0.533] Chunk size (256 to 1024 tokens) and overlap (10 to 20 percent) are key hyperparameters that affect both retrieval precision and context coherence. Smaller chunks imp",
+      "observation": "Here is a 3-sentence summary of the text:\n\nRetrieval-Augmented Generation (RAG) systems use a retriever to fetch relevant passages from an external corpus based on a query, which are then concatenated by a generative model. Key hyperparameters for these systems include chunk size and overlap, which balance precision and context coherence. Modern RAG systems often use dense retrievers backed by vec"
+    }
+  ],
+  "final_answer": "Here is the concise final answer:\n\n\"Chunking strategies in RAG pipelines involve splitting long texts into smaller passages (chunks) with a fixed size and overlap, which balances retrieval precision and context coherence.\"",
+  "total_latency_ms": 15253.94,
+  "tool_calls": [
+    {
+      "tool": "retriever",
+      "input": "Explain what chunking strategies are used in RAG pipelines and why overlap matters.",
+      "output_snippet": "[doc_07 | score=0.533] Chunk size (256 to 1024 tokens) and overlap (10 to 20 percent) are key hyperparameters that affect both retrieval precision and context coherence. Smaller chunks improve precision but may lose context\n[doc_07 | score=0.484] Document chunking splits long texts into smaller pass",
+      "latency_ms": 1525.19,
+      "success": true
+    },
+    {
+      "tool": "summarizer",
+      "input": "[retriever] [doc_07 | score=0.533] Chunk size (256 to 1024 tokens) and overlap (10 to 20 percent) are key hyperparameters that affect both retrieval precision and context coherence. Smaller chunks imp",
+      "output_snippet": "Here is a 3-sentence summary of the text:\n\nRetrieval-Augmented Generation (RAG) systems use a retriever to fetch relevant passages from an external corpus based on a query, which are then concatenated by a generative model. Key hyperparameters for these systems include chunk size and overlap, which ",
+      "latency_ms": 6082.94,
+      "success": true
+    }
+  ],
+  "success": true,
+  "failure_reason": ""
+}

@@ -1,0 +1,3 @@
+Title: Prompt Engineering
+
+Prompt engineering designs inputs to elicit desired LLM behaviour without parameter updates. Few-shot prompting includes examples in the context. Chain-of-thought (CoT) prompting instructs the model to reason step-by-step before answering, improving arithmetic and multi-hop reasoning. ReAct interleaves reasoning (Thought) and action (tool calls) with observations, enabling agents to interact with external environments. Self-consistency prompting samples multiple reasoning chains and takes the majority answer. Prompt templates and system instructions shape model behaviour in production deployments.

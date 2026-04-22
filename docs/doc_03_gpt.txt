@@ -1,0 +1,3 @@
+Title: GPT and Autoregressive Language Models
+
+GPT (Generative Pre-trained Transformer) models generate text autoregressively: each token is conditioned on all preceding tokens. GPT-3 has 175 billion parameters and demonstrates impressive few-shot learning with no gradient updates at inference time. GPT-4 further improves reasoning and instruction following. The key training objective is causal language modelling (next-token prediction). GPT models use a decoder-only transformer architecture without the cross-attention layers present in the original encoder-decoder design.

@@ -1,0 +1,3 @@
+Title: Hallucination in Large Language Models
+
+Hallucination refers to LLM outputs that are factually incorrect or unsupported by the input context. Intrinsic hallucination contradicts the source, while extrinsic hallucination introduces new unverifiable claims. RAG reduces hallucination by providing explicit grounding passages. Groundedness scoring checks whether each claim in the response can be attributed to retrieved text using NLI or lexical overlap methods. Chain-of-verification (CoVe) prompts the model to check its own answers. Hallucination is more common in low-resource languages and long-form generation tasks.

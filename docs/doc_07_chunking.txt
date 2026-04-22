@@ -1,0 +1,3 @@
+Title: Chunking Strategies for RAG
+
+Document chunking splits long texts into smaller passages that fit within the context window of the retriever and generator. Fixed-size chunking splits by a fixed token or character count with optional overlap. Recursive chunking uses a hierarchy of separators (paragraphs then sentences then words). Sentence-based chunking preserves linguistic boundaries by grouping complete sentences into windows. Chunk size (256 to 1024 tokens) and overlap (10 to 20 percent) are key hyperparameters that affect both retrieval precision and context coherence. Smaller chunks improve precision but may lose context; larger chunks improve context but reduce precision.

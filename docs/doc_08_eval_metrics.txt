@@ -1,0 +1,3 @@
+Title: Evaluation Metrics for Retrieval
+
+Common retrieval evaluation metrics include Precision@k (fraction of top-k retrieved documents that are relevant), Recall@k (fraction of relevant documents retrieved in top-k), and Mean Reciprocal Rank (MRR, the average reciprocal rank of the first relevant result). NDCG@k weights relevance by position using a logarithmic discount. Latency (ms per query) and throughput (queries per second) measure operational efficiency. F1@k combines precision and recall into a single score. These metrics require ground-truth relevance judgements for each query in the evaluation set.

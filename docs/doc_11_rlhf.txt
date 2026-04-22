@@ -1,0 +1,3 @@
+Title: Instruction Tuning and RLHF
+
+Instruction tuning fine-tunes a pre-trained LLM on (instruction, response) pairs so the model follows natural-language directions. InstructGPT applies Reinforcement Learning from Human Feedback (RLHF): a reward model is trained on human preference rankings, then PPO (Proximal Policy Optimisation) optimises the LLM to maximise reward while staying close to the SFT baseline via a KL penalty. RLHF significantly improves helpfulness and reduces harmful outputs. The reward model is typically a smaller language model trained on pairwise human preference comparisons.

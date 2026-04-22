@@ -1,0 +1,44 @@
+{
+  "tasks": [
+    {
+      "id": "task_01",
+      "task": "Retrieve and summarize the key ideas behind Retrieval-Augmented Generation."
+    },
+    {
+      "id": "task_02",
+      "task": "Find information about BERT and GPT, then compare their pre-training objectives."
+    },
+    {
+      "id": "task_03",
+      "task": "Explain what chunking strategies are used in RAG pipelines and why overlap matters."
+    },
+    {
+      "id": "task_04",
+      "task": "Extract key numeric facts about GPT-3 and DistilBERT model sizes."
+    },
+    {
+      "id": "task_05",
+      "task": "Summarize how FAISS enables efficient similarity search for dense retrieval."
+    },
+    {
+      "id": "task_06",
+      "task": "Retrieve information about hallucination in LLMs and extract the types mentioned."
+    },
+    {
+      "id": "task_07",
+      "task": "What is the ReAct prompting pattern and how does it differ from chain-of-thought?"
+    },
+    {
+      "id": "task_08",
+      "task": "Retrieve and summarize how LoRA works for parameter-efficient fine-tuning."
+    },
+    {
+      "id": "task_09",
+      "task": "Tell me about the weather forecast for tomorrow."
+    },
+    {
+      "id": "task_10",
+      "task": "Find information about Mixture of Experts and extract the model names mentioned."
+    }
+  ]
+}

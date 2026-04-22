@@ -1,0 +1,3 @@
+Title: Sentence Transformers and Dense Retrieval
+
+Sentence Transformers (SBERT) fine-tune transformer models using siamese and triplet networks so that semantically similar sentences map to nearby points in embedding space. The model all-MiniLM-L6-v2 produces 384-dimensional embeddings and runs efficiently on CPU. Dense retrieval with sentence embeddings outperforms BM25 on open-domain QA tasks, especially for paraphrase-style questions. SBERT uses mean pooling over token embeddings to produce a fixed-size sentence representation. The training uses contrastive loss with positive and negative sentence pairs.

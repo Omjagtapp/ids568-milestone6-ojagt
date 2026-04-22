@@ -1,0 +1,3 @@
+Title: Mixture of Experts (MoE)
+
+Mixture of Experts (MoE) scales model capacity without proportionally increasing compute. A gating network routes each token to a subset of expert FFN layers (typically top-2 out of 8). Only the selected experts are active per forward pass, reducing FLOPs per token. Mistral 8x7B and GPT-4 (as reported) use sparse MoE. Load balancing losses prevent expert collapse where a few experts receive all tokens. Switch Transformer showed that even top-1 routing (one expert per token) can work effectively with proper load balancing.
